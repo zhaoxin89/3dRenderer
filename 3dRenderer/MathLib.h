@@ -1,5 +1,7 @@
 #pragma once
 
+#define MAX_OBJECT_POINTS 256
+
 typedef struct RenPoint2D
 {
 	float x, y;
@@ -13,6 +15,10 @@ typedef struct RenPoint3D
 typedef struct RenPoint4D
 {
 	float x, y, z, w;
+	RenPoint4D(int x1, int y1, int z1, int w1)
+	{
+		x = x1; y = y1; z = z1; w = w1;
+	}
 }RenPoint4D, * RenPoint4DPtr;
 
 typedef struct RenLine2D
@@ -33,9 +39,24 @@ typedef struct RenLine4D
 typedef struct RenMatrix4D
 {
 	float M[4][4];
-}RenMatrix4D, * RenMatrix4D;
+}RenMatrix4D, * RenMatrix4DPtr;
 
 typedef struct RenTriangle
 {
-	RenPoint3D[3];
-}RenTriangle, * RenTriangle;
+	int pointIndex[3];
+	int texIndex[3];
+
+}RenTriangle, * RenTrianglePtr;
+typedef struct RenTextile
+{
+	int u, v;
+}RenTextile, *RenTextilePtr;
+
+typedef struct RenObject
+{
+	char name[64];
+	RenPoint4D pointList[MAX_OBJECT_POINTS];
+	RenTrianglePtr triangleList;
+	RenTrianglePtr transferredTriangleList;
+	RenTextilePtr textileList;
+}RenObject, * RenObjectPtr;
