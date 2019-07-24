@@ -15,11 +15,17 @@ class RenEngine
 		void Rendering();
 		void ReadKeyInput();
 		static RenEngine* GetInstance();
+		
+		void Rasteration();
+		void DrawTriangleList();
+		void DrawTriangleFlatButton();
+		void DrawTriangleFlatTop();
 	private:
 		RenCamera renCamera;
 		RenTextile renTextile [MAX_NUM_TEXTILES];
 		RenLight renLight [MAX_NUM_LIGHTS];
-		RenObject renObject [MAX_NUM_OBJECTS];
+		RenObject renObjectList [MAX_NUM_OBJECTS];
 		static RenEngine* instance;
+		int numberOfObjects;
 }
 
