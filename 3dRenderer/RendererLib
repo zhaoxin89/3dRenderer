@@ -3,6 +3,13 @@
 #define MAX_OBJECT_POINTS 256
 #define MAX_NUM_TRIANGLES 64;
 
+#define PRIMITIVE_STATE_ACTIVE 0
+#define PRIMITIVE_STATE_NON_ACTIVE 1
+
+#define PRIMITIVE_MODE_WIREFRAME 0
+#define PRIMITIVE_MODE_PURE_COLOR 1
+#define PRIMITIVE_MODE_TEXTURE 2
+
 typedef struct RenColor
 {
 	unsigned char red;
@@ -61,7 +68,7 @@ typedef struct RenTriangle
 	int texIndex[3];
 	RenVector3D normal;
 	RenPoint4DPtr pointListPtr;
-	RenTextilePtr textileListPtr;
+	RenTextilePtr textureListPtr;
 	RenTriangle (int pi1, int pi2, int pi3, int ti1, int ti2, int ti3)
 	{
 		pointIndex[0] = pi1; pointIndex[1] = pi2; pointIndex[2] = pi3;
@@ -69,14 +76,26 @@ typedef struct RenTriangle
 	}
 
 }RenTriangle, * RenTrianglePtr;
-typedef struct RenTextile
+
+typedef struct RenPrimitive
+{
+	RenPoint4D p[3];
+	RenTexture t[3];
+	RenColor c; // used for wireframe mode
+	RenVector3D normal;
+	BitMapPtr *map;
+	int renderMode;
+	int state;
+}RenPrimitive, * RenPrimitivePtr;
+
+typedef struct RenTexture
 {
 	float u, v;
-	RenTextile (float u1, float v1)
+	RenTexture (float u1, float v1)
 	{
 		u = u1; v = v1;
 	}
-}RenTextile, *RenTextilePtr;
+}RenTexture, *RenTexturePtr;
 
 typedef struct RenCamera
 {

@@ -82,54 +82,112 @@ void ReadKeyInput()
 	
 }
 
-void RenEngine::Rasteration()
+void RenEngine::Rasterization()
 {
-	RenTriangle tmpTriangle;
-	RenObject tmpObject;
-	for (int j = 0; j < numberOfObjects; j ++)
+	RenPrimitive tmpPrimitive;
+	for (int i = 0; i < numberOfPrimitives; i++)
 	{
-		tmpObject = renObjectList[j];
-		for (int i = 0; i < tmpObject.numberOfTriangles; i++)
+		if (renRenderingList[i].state == PRIMITAVE_STATE_ACTIVE)
 		{
-			tmpTriangle = tmpObject.triangleList[number];
-			tmpObject.pointList[tmpTriangle.pointIndex[0]]
-			DrawTriangle (&tmpTriangle);
+			tmpPrimitive = renRenderingList[i];
+			DrawPrimitive(tmpPrimitive);
 		}
 	}
 }
 
-void DrawTriangle (RenTriangle t)
+void RenEngine::DrawPrimitive (RenPrimitive &pri)
 {
-	RenPoint4D p1 = t.pointListPtr[t.pointIndex[0]];
-	RenPoint4D p2 = t.pointListPtr[t.pointIndex[1]];
-	RenPoint4D p3 = t.pointListPtr[t.pointIndex[2]];
-	if (p1.y > p2.y)
-		SwapPoint4D(&p1, &p2);
-	if (p1.y > p3.y)
-		SwapPoint4D(&p1, &p3);
-	if (p2.y > p3.y)
-		SwapPoint4D(&p2, &p3);
-	if (p1.y == p2.y) 
-		DrawTriangleFlatTop();
-	else if (p2.y == p3.y)
-		DrawTriangleFlatButton();
-	else
+	RenPoint4D p1 = pri.p[0];
+	RenPoint4D p2 = pri.p[1];
+	RenPoint4D p3 = pri.p[2];
+	
+	if (pri.renderMode == PRIMITIVE_MODE_WIREFRAME)
 	{
-		//draw general triangle
+		DrawLine(p1.x, p1.y, p2.x, p2.y, pri.color);
+		DrawLine(p1.x, p1.y, p3.x, p3.y, pri.color);
+		DrawLine(p2.x, p2.y, p3.x, p3.y, pri.color);
+	}
+	
+	else 
+	{
+		if (p1.y > p2.y)
+			SwapPoint4D(&p1, &p2);
+		if (p1.y > p3.y)
+			SwapPoint4D(&p1, &p3);
+		if (p2.y > p3.y)
+			SwapPoint4D(&p2, &p3);
+		if (p1.x > p2.x)
+			SwapPoint4D(&p1, &p2);
+		if (p3.x > p2.x)
+			SwapPoint4D(&p2, &p3);
+		
+		
+
+		if (p1.y == p2.y) 
+			DrawPrimitiveFlatTop();
+		else if (p2.y == p3.y)
+			DrawPrimitiveFlatButton();
+		else
+		{
+			//draw general triangle
+		}
 	}
 		
 }
 
-void DrawTriangleFlatTop (RenPoint3D p1, RenPoint3D p2, RenPoint3D p3, RenColor c)
+void DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, int mode)
+{
+	//assume that p1.y = p2.y
+	float dy = p3.y - p1.y;
+	float xStart = p1.x;
+	float xEnd = p2.x;
+	float yStart = p1.y;
+	float yEnd = p3.y;
+	float dxdyl = (p3.x - p1.x)/dy;
+	float dxdyr = (p3.x - p2.x)/dy;
+
+	RenColor tmpColor;
+	for (float iy = yStart; iy < yEnd; iy++)
+	{
+		for (float ix = xStart; ix < xEnd; ix ++)
+		{
+			COLORREF color = RenColorToCOLORREF(tmpColor);
+			SetPixel (hdc, ix, iy,color);
+		}
+		xStart += dxdyl;
+		xEnd += dxdyr;
+	}
+}
+
+void DrawPrimitiveFlatButton (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3)
 {
 	
 }
 
-void DrawTriangleFlatButton (RenPoint3D p1, RenPoint3D p2, RenPoint3D p3, RenColor c)
+void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renColor)
 {
-	
+	COLORREF color = RenColorToCOLORREF(renColor);
+	if ((x2-x1)<(y2-y1))
+	{
+		float ix = x1;
+		float dx = (x2 - x1)/(y2 - y1);
+		for (int iy = y1; iy < y2; iy++)
+		{
+			SetPixel(hdc, ix, iy, color);
+			ix += dx;
+		}
+	}
+	else
+	{
+		float iy = y1;
+		float dy = (y2-y1)/(x2-x1);
+		for (int ix = x1; ix < x2; ix ++)
+		{
+			SetPixel(hdc, ix, iy, color);
+			iy += dy;
+		}
+	}
 }
-
 RenColor BitMapFindColor (BitMap *map, float x, float y)
 {
 	
