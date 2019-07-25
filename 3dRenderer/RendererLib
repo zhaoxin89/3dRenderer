@@ -108,7 +108,7 @@ typedef struct RenObject
 {
 	char name[64];
 	RenPoint4D pointList[MAX_OBJECT_POINTS];
-	RenTextile textileList[MAX_NUM_TEXTILES];
+	RenTextile textureList[MAX_NUM_TEXTURES];
 	RenTriangle triangleList[MAX_NUM_TRIANGLES];
 	RenTriangle transferredTriangleList[MAX_NUM_TRIANGLES];
 	int numberOfTriangles;

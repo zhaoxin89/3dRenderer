@@ -5,6 +5,7 @@
 #define MAX_NUM_LIGHTS 3
 #define MAX_NUM_OBJECTS 4
 #define MAX_NUM_PRIMITAVE 1024
+#define MAX_NUM_BMP 2
 void RenderLoop();
 
 class RenEngine
@@ -27,6 +28,7 @@ class RenEngine
 		RenLight renLight [MAX_NUM_LIGHTS];
 		RenObject renObjectList [MAX_NUM_OBJECTS];
 		RenPrimitave renRenderingList[MAX_NUM_PRIMITAVE];
+		BMP bitmap[MAX_NUM_BMP];
 		static RenEngine* instance;
 		int numberOfObjects;
 		int numberOfPrimitives;

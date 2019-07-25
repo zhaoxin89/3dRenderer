@@ -135,7 +135,7 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 		
 }
 
-void DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, int mode)
+void RenEngine::DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3)
 {
 	//assume that p1.y = p2.y
 	float dy = p3.y - p1.y;
@@ -145,6 +145,8 @@ void DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, int m
 	float yEnd = p3.y;
 	float dxdyl = (p3.x - p1.x)/dy;
 	float dxdyr = (p3.x - p2.x)/dy;
+	
+	map->data
 
 	RenColor tmpColor;
 	for (float iy = yStart; iy < yEnd; iy++)
