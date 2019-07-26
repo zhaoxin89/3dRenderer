@@ -105,7 +105,12 @@ typedef struct RenCamera
 	RenVector4D up, forward, right;
 	float zn, zf;
 	RenMatrix4D cameraTrans;
-}
+	void InitCamera(RenPoint4D &loc, RenPoint4D &u, RenPoint4D &f, RenPoint4D &r, float zN, float zF)
+	{
+		location = loc;
+		
+	}
+}RenCamera, * RenCameraPtr;
 
 typedef struct RenObject
 {

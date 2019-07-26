@@ -18,42 +18,59 @@ RenEngine* RenEngine::GetInstance()
 
 RenEngine::RenEngine()
 {
-	renCamera.InitCamera();
-	loadObject();
-	addLight();
 }
 
+void RenEngine::RendInit()
+{
+	LoadTriangleObject();
+	renCamera.InitCamera();
+	RenColor ambientColor(255,255,255,1);
+	AddAmbientLight(ambientColor);
+	RenColor directionalColor(255,255,255,1);
+	RenVector4D lightDirection(0,0,1,1);
+	AddDirectionalLight(directionalColor, lightDirection);
+	//LoadBMP();
+}
 void RenEngine::RenderLoop()
 {
+	RenVector4D worldPos(0,0,0,1);
+	LocalToProjectionTransformation(worldPos)
 	GenerateRenderingList();
 	PreRendering();
 	Rendering();
 	ReadKeyInput();
 }
 
-void RenEngine::LoadObject()
+void RenEngine::LoadTriangleObject()
 {
 	char tmpName [] = "testTriangleObj";
-	strcpy(renObject.name, tmpName);
-	RenColor c(255, 0, 0, 1);
+	strcpy(renObjectList[numberOfObjects].name, tmpName);
+	RenColor c(255, 0, 0, 1); //red
 	RenPoint4D p1(0, 5, 50, 1, c);
 	RenPoint4D p2(5, 0, 50, 1, c);
 	RenPoint4D p3(0, 0, 50, 1, c);
-	renObject.pointList[0] = p1;
-	renObject.pointList[1] = p2;
-	renObject.pointList[2] = p3;
-	RenTextile t1(0, 0);
-	RenTextile t2(1, 1);
-	RenTextile t3(0, 1);
-	renObject.textileList[0] = t1;
-	renObject.textileList[1] = t2;
-	renObject.textileList[2] = t3;
+	renObjectList[numberOfObjects].pointList[0] = p1;
+	renObjectList[numberOfObjects].pointList[1] = p2;
+	renObjectList[numberOfObjects].pointList[2] = p3;
+	RenTexture t1(0, 0);
+	RenTexture t2(1, 1);
+	RenTexture t3(0, 1);
+	renObjectList[numberOfObjects].textureList[0] = t1;
+	renObjectList[numberOfObjects].textureList[1] = t2;
+	renObjectList[numberOfObjects].textureList[2] = t3;
 	RenTiangle tmpTriangle(0,1,2,0,1,2);
 	tmpTriangle.normal = CalculateTriangleNormal(&tmpTriangle);
-	renObject.triangleList[0] = tmpTriangle;
-	renObject.numberOfTriangles = 1;
+	renObjectList[numberOfObjects].triangleList[0] = tmpTriangle;
+	renObjectList[numberOfObjects].numberOfPoints = 3;
+	renObjectList[numberOfObjects].maxRadius = 5;
+	renObjectList[numberOfObjects].numberOfTriangles = 1;
 	
 	numberOfObjects ++;
+}
+
+void RenEngine::LoadObjectFromFile(char* filename)
+{
+	
 }
 
 void GenerateRenderingList()
