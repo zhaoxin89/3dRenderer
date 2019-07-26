@@ -69,6 +69,7 @@ typedef struct RenTriangle
 	RenVector3D normal;
 	RenPoint4DPtr pointListPtr;
 	RenTextilePtr textureListPtr;
+	float angleWithSunLight;
 	RenTriangle (int pi1, int pi2, int pi3, int ti1, int ti2, int ti3)
 	{
 		pointIndex[0] = pi1; pointIndex[1] = pi2; pointIndex[2] = pi3;
@@ -86,6 +87,7 @@ typedef struct RenPrimitive
 	BitMapPtr *map;
 	int renderMode;
 	int state;
+	float angleWithSunLight;
 }RenPrimitive, * RenPrimitivePtr;
 
 typedef struct RenTexture
@@ -99,8 +101,9 @@ typedef struct RenTexture
 
 typedef struct RenCamera
 {
-	RenPoint3D location;
-	float up, forward, right;
+	RenPoint4D location;
+	RenVector4D up, forward, right;
+	float zn, zf;
 	RenMatrix4D cameraTrans;
 }
 
@@ -108,8 +111,11 @@ typedef struct RenObject
 {
 	char name[64];
 	RenPoint4D pointList[MAX_OBJECT_POINTS];
-	RenTextile textureList[MAX_NUM_TEXTURES];
+	RenPoint4D transferredPointList[MAX_OBJECT_POINTS];
+	RenTexture textureList[MAX_NUM_TEXTURES];
 	RenTriangle triangleList[MAX_NUM_TRIANGLES];
-	RenTriangle transferredTriangleList[MAX_NUM_TRIANGLES];
+	//RenTriangle transferredTriangleList[MAX_NUM_TRIANGLES];
+	int numberOfPoints;
 	int numberOfTriangles;
+	float maxRadius;
 }RenObject, * RenObjectPtr;

@@ -11,17 +11,31 @@ void RenderLoop();
 class RenEngine
 {
 	public:
-		void LoadObject();
+		static RenEngine* GetInstance();
+		
+		void RenderInit();
+		void RenderLoop();
+		void RenderExit();
+		
+	private:
+		void LoadObject(RenMatrix &worldPos);
 		void GenerateRenderingList();
 		void PreRendering();
 		void Rendering();
 		void ReadKeyInput();
-		static RenEngine* GetInstance();
+		
+		void LocalToProjectionTransformation();
+		
+		void IsObjectOutOfBoundary();
+		void ProjectionToViewPortTransformation();
+		
+		void BackFaceDetection();
 		
 		void Rasteration();
 		void DrawTriangleList();
 		void DrawTriangleFlatButton();
 		void DrawTriangleFlatTop();
+		
 	private:
 		RenCamera renCamera;
 		RenTextile renTextile [MAX_NUM_TEXTILES];

@@ -12,6 +12,8 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 
+RenEngine myRenderer = NULL;
+
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -43,6 +45,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
+	myRenderer = RenEngine::getInstance();
+	RenderInit();
 	while (TRUE)
 	{
 		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE));
@@ -58,9 +62,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		RenderLoop();
 	}
-
-    
-
+	
+	RenderExit();
+	free(myRenderer);
+	myRenderer = NULL;
     //// Main message loop:
     //while (GetMessage(&msg, nullptr, 0, 0))
     //{
