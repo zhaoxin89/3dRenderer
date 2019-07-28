@@ -164,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="3dRenderer.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3dRenderer.rc" />

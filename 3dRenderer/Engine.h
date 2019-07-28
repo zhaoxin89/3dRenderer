@@ -19,24 +19,31 @@ public:
 	void RenderExit();
 
 private:
-	void LoadObject(RenMatrix4D& worldPos);
+
+	// test function: load one triangle
+	void LoadTriangleObject();
+
+	void LoadObjectFromFile(char* filename);
+
+	void AddLight(int att, RenColor c, RenVector4D dir, RenVector4D loc);
+	
 	void GenerateRenderingList();
 	void PreRendering();
 	void Rendering();
 	void ReadKeyInput();
 
-	void LocalToProjectionTransformation();
+	void LocalToProjectionTransformation(RenVector4D worldPos);
 
 	void IsObjectOutOfBoundary();
 	void ProjectionToViewPortTransformation();
 
 	void BackFaceDetection();
 
-	void Rasteration();
-	void DrawTriangleList();
-	void DrawTriangleFlatButton();
-	void DrawTriangleFlatTop();
-
+	void Rasterization();
+	void DrawPrimitive(RenPrimitive& pri);
+	void DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTexture& t1, RenTexture& t2, RenTexture& t3);
+	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTexture& t1, RenTexture& t2, RenTexture& t3);
+	void DrawLine(float x1, float y1, float x2, float y2, RenColor renColor);
 private:
 	RenCamera renCamera;
 	RenTexture renTexture[MAX_NUM_TEXTURES];
@@ -45,8 +52,9 @@ private:
 	RenPrimitive renRenderingList[MAX_NUM_PRIMITAVE];
 	BMP bitmap[MAX_NUM_BMP];
 	static RenEngine* instance;
-	int numberOfObjects;
-	int numberOfPrimitives;
+	int numberOfLights = 0;
+	int numberOfObjects = 0;
+	int numberOfPrimitives = 0;
 	HDC hdc;
 
 	RenEngine();

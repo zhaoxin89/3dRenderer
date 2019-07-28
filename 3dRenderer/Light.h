@@ -11,5 +11,5 @@ private:
 	RenVector4D direction;
 	RenVector4D location;
 public:
-
+	void InitLight(int att, RenColor c, RenVector4D dir, RenVector4D loc);
 };

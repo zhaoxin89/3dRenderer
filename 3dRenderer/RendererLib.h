@@ -20,6 +20,11 @@ typedef struct RenColor
 	unsigned char green;
 	unsigned char blue;
 	unsigned char alpha;
+
+	RenColor(unsigned char r = 255, unsigned char g = 0, unsigned char b = 0, unsigned char a = 1)
+	{
+		red = r; green = g; blue = b; alpha = a;
+	}
 }RenColor, * RenColorPtr;
 
 typedef struct RenPoint2D
@@ -44,6 +49,17 @@ typedef struct RenPoint4D
 {
 	float x, y, z, w;
 	RenColor color;
+	RenPoint4D(float x1 = 1, float y1 = 0, float z1 = 0, float w1 = 1)
+	{ 
+		x = x1; y = y1; z = z1; w = w1;
+	}
+	RenPoint4D(RenPoint4D& p1, RenPoint4D& p2)
+	{
+		x = p2.x - p1.x;
+		y = p2.y - p1.y;
+		z = p2.z - p1.z;
+		w = 1;
+	}
 	void SetValue(float x1, float y1, float z1, float w1)
 	{
 		x = x1; y = y1; z = z1; w = w1;
@@ -128,3 +144,28 @@ typedef struct RenObject
 	int numberOfTriangles;
 	float maxRadius;
 }RenObject, * RenObjectPtr;
+
+RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v)
+{
+	RenVector4D ret;
+	ret.x = u.y * v.z - v.y * u.z;
+	ret.y = u.x * v.z - v.x * u.z;
+	ret.z = u.x * v.y - v.x * u.y;
+	ret.w = 1;
+	return ret;
+}
+
+void Vector4DNormalize(RenVector4D* v)
+{
+	float l = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
+	v->x /= l;
+	v->y /= l;
+	v->z /= l;
+}
+void CalculateTriangleNormal(RenTriangle* tri)
+{
+	RenVector4D v1(tri->pointListPtr[tri->pointIndex[1]], tri->pointListPtr[tri->pointIndex[0]]);
+	RenVector4D v2(tri->pointListPtr[tri->pointIndex[2]], tri->pointListPtr[tri->pointIndex[0]]);
+	tri->normal = CalculateCrossProduct(v1, v2);
+	Vector4DNormalize(&(tri->normal));
+}
