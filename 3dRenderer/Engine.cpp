@@ -23,7 +23,7 @@ RenEngine::RenEngine()
 void RenEngine::RendInit()
 {
 	LoadTriangleObject();
-	renCamera.InitCamera();
+	renCamera.InitCamera(10,10000);
 	RenColor ambientColor(255,255,255,1);
 	AddAmbientLight(ambientColor);
 	RenColor directionalColor(255,255,255,1);
@@ -311,4 +311,24 @@ void RenEngine::Lighting()
 			}
 		}
 	}
+}
+
+void RenCamera::InitCamera(float zN, float zF)
+{
+	zn = zN;
+	zf = zF;
+	up.SetValue (0,1,0,1);
+	forword.SetValue(0,0,1,1);
+	right.SetValue(1,0,0,1);
+	CalculateCameraTrans();
+}
+
+void RenCamera::CalculateCameraTrans()
+{
+	RenMatrix m1 = RenMatrix.CreateIdentityMatrix;
+	m1[3][0] = - location.x;
+	m1[3][1] = - location.y;
+	m1[3][2] = - location.z;
+	//TODO: rotation
+	cameraTrans = m1;
 }

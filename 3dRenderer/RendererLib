@@ -30,7 +30,7 @@ typedef struct RenPoint3D
 	{
 		x = x1; y = y1; z = z1; w = w1;
 	}
-}RenPoint3D, * RenPoint3DPtr;
+}RenPoint3D, RenVector3D, *RenVector3DPtr, * RenPoint3DPtr;
 
 typedef struct RenPoint4D
 {
@@ -40,7 +40,11 @@ typedef struct RenPoint4D
 	{
 		x = x1; y = y1; z = z1; w = w1; color = color1;
 	}
-}RenPoint4D, * RenPoint4DPtr;
+	void SetValue(float x1, float y1, float z1, float w1)
+	{
+		x = x1; y = y1; z = z1; w = w1; color = color1;
+	}
+}RenPoint4D, RenVector4D, * RenVector4DPtr, * RenPoint4DPtr;
 
 typedef struct RenLine2D
 {
@@ -50,12 +54,12 @@ typedef struct RenLine2D
 typedef struct RenLine3D
 {
 	RenPoint3D p1, p2;
-}RenLine3D, RenVector3D, * RenLine3DPtr;
+}RenLine3D, * RenLine3DPtr;
 
 typedef struct RenLine4D
 {
 	RenPoint4D p1, p2;
-}RenLine4D, RenVector4D, * RenLine4DPtr;
+}RenLine4D, * RenLine4DPtr;
 
 typedef struct RenMatrix4D
 {
@@ -98,19 +102,6 @@ typedef struct RenTexture
 		u = u1; v = v1;
 	}
 }RenTexture, *RenTexturePtr;
-
-typedef struct RenCamera
-{
-	RenPoint4D location;
-	RenVector4D up, forward, right;
-	float zn, zf;
-	RenMatrix4D cameraTrans;
-	void InitCamera(RenPoint4D &loc, RenPoint4D &u, RenPoint4D &f, RenPoint4D &r, float zN, float zF)
-	{
-		location = loc;
-		
-	}
-}RenCamera, * RenCameraPtr;
 
 typedef struct RenObject
 {

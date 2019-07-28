@@ -38,7 +38,7 @@ class RenEngine
 		
 	private:
 		RenCamera renCamera;
-		RenTextile renTextile [MAX_NUM_TEXTILES];
+		RenTextile renTexture [MAX_NUM_TEXTURES];
 		RenLight renLight [MAX_NUM_LIGHTS];
 		RenObject renObjectList [MAX_NUM_OBJECTS];
 		RenPrimitave renRenderingList[MAX_NUM_PRIMITAVE];
@@ -49,3 +49,18 @@ class RenEngine
 		HDC hdc;
 }
 
+class RenCamera
+{
+	private;
+		RenPoint4D location;
+		RenVector4D up, forward, right;
+		float zn, zf;
+		RenMatrix4D cameraTrans;
+	public:
+		void InitCamera(float zN, float zF);
+		void CalculateCameraTrans();
+		void UpdateLocation(RenPoint4D &loc);
+		void UpdateUp(RenVector4D &u);
+		void UpdateForward(RenVector &f);
+		void UpdateRight(RenVector4D &r);
+}
