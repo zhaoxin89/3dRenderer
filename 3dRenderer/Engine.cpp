@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-#include "MathLib.h"
+#include "RendererLib.h"
 #include "string.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,7 +20,7 @@ RenEngine::RenEngine()
 {
 }
 
-void RenEngine::RendInit()
+void RenEngine::RenderInit()
 {
 	LoadTriangleObject();
 	renCamera.InitCamera(10,10000);
