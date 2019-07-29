@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+#include <windows.h>
 #define MAX_OBJECT_POINTS 256
 #define MAX_NUM_TRIANGLES 64
 #define MAX_NUM_TEXTURES 2
@@ -16,10 +18,10 @@
 
 typedef struct RenColor
 {
-	unsigned char red;
-	unsigned char green;
-	unsigned char blue;
 	unsigned char alpha;
+	unsigned char blue;
+	unsigned char green;
+	unsigned char red;
 
 	RenColor(unsigned char r = 255, unsigned char g = 0, unsigned char b = 0, unsigned char a = 1)
 	{
@@ -45,6 +47,11 @@ typedef struct RenPoint3D
 	}
 }RenPoint3D, RenVector3D, *RenVector3DPtr, * RenPoint3DPtr;
 
+typedef struct RenMatrix4D
+{
+	float M[4][4];
+}RenMatrix4D, * RenMatrix4DPtr;
+
 typedef struct RenPoint4D
 {
 	float x, y, z, w;
@@ -68,6 +75,15 @@ typedef struct RenPoint4D
 	{
 		color = c;
 	}
+	RenPoint4D operator * (const RenMatrix4D m)
+	{
+		RenPoint4D p;
+		p.x = this->x * m.M[0][0] + this->y * m.M[1][0] + this->z * m.M[2][0] + this->w * m.M[3][0];
+		p.y = this->x * m.M[0][1] + this->y * m.M[1][1] + this->z * m.M[2][1] + this->w * m.M[3][1];
+		p.z = this->x * m.M[0][2] + this->y * m.M[1][2] + this->z * m.M[2][2] + this->w * m.M[3][2];
+		p.w = this->x * m.M[0][3] + this->y * m.M[1][3] + this->z * m.M[2][3] + this->w * m.M[3][3];
+		return p;
+	}
 }RenPoint4D, * RenPoint4DPtr, RenVector4D, * RenVector4DPtr;
 
 typedef struct RenLine2D
@@ -85,10 +101,14 @@ typedef struct RenLine4D
 	RenPoint4D p1, p2;
 }RenLine4D, * RenLine4DPtr;
 
-typedef struct RenMatrix4D
+typedef struct RenTexture
 {
-	float M[4][4];
-}RenMatrix4D, * RenMatrix4DPtr;
+	float u, v;
+	RenTexture(float u1 = 0, float v1 = 0)
+	{
+		u = u1; v = v1;
+	}
+}RenTexture, * RenTexturePtr;
 
 typedef struct RenTriangle
 {
@@ -102,7 +122,7 @@ typedef struct RenTriangle
 	{
 		pointIndex[0] = pi1; pointIndex[1] = pi2; pointIndex[2] = pi3;
 		texIndex[0] = ti1; texIndex[1] = ti2; texIndex[2] = ti3;
-		normal.SetValue(1, 0, 0,1);
+		normal.SetValue(1, 0, 0, 1);
 		pointListPtr = 0;
 		textureListPtr = 0;
 		angleWithSunLight = 0;
@@ -115,22 +135,13 @@ typedef struct RenPrimitive
 	RenPoint4D p[3];
 	RenTexture t[3];
 	RenColor c; // used for wireframe mode
-	RenVector3D normal;
+	//RenVector3D normal;
 	//TODO: 
 	//BitMapPtr *map;
 	int renderMode;
 	int state;
-	float angleWithSunLight;
+	//float angleWithSunLight;
 }RenPrimitive, * RenPrimitivePtr;
-
-typedef struct RenTexture
-{
-	float u, v;
-	RenTexture (float u1 = 0, float v1 = 0)
-	{
-		u = u1; v = v1;
-	}
-}RenTexture, *RenTexturePtr;
 
 typedef struct RenObject
 {
@@ -145,27 +156,13 @@ typedef struct RenObject
 	float maxRadius;
 }RenObject, * RenObjectPtr;
 
-RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v)
-{
-	RenVector4D ret;
-	ret.x = u.y * v.z - v.y * u.z;
-	ret.y = u.x * v.z - v.x * u.z;
-	ret.z = u.x * v.y - v.x * u.y;
-	ret.w = 1;
-	return ret;
-}
 
-void Vector4DNormalize(RenVector4D* v)
-{
-	float l = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
-	v->x /= l;
-	v->y /= l;
-	v->z /= l;
-}
-void CalculateTriangleNormal(RenTriangle* tri)
-{
-	RenVector4D v1(tri->pointListPtr[tri->pointIndex[1]], tri->pointListPtr[tri->pointIndex[0]]);
-	RenVector4D v2(tri->pointListPtr[tri->pointIndex[2]], tri->pointListPtr[tri->pointIndex[0]]);
-	tri->normal = CalculateCrossProduct(v1, v2);
-	Vector4DNormalize(&(tri->normal));
-}
+RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v);
+
+void Vector4DNormalize(RenVector4D* v);
+void CalculateTriangleNormal(RenTriangle* tri);
+
+RenMatrix4D CreateIdentityMatrix();
+void SwapPoint4D(RenPoint4D p1, RenPoint4D p2);
+
+COLORREF RenColorToCOLORREF(RenColor c);

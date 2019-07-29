@@ -14,7 +14,7 @@ class RenEngine
 public:
 	static RenEngine* GetInstance();
 
-	void RenderInit();
+	void RenderInit(HDC h);
 	void RenderLoop();
 	void RenderExit();
 
@@ -29,10 +29,12 @@ private:
 	
 	void GenerateRenderingList();
 	void PreRendering();
+
+	void Lighting();
 	void Rendering();
 	void ReadKeyInput();
 
-	void LocalToProjectionTransformation(RenVector4D worldPos);
+	void LocalToProjectionTransformation(RenVector4D &worldPos);
 
 	void IsObjectOutOfBoundary();
 	void ProjectionToViewPortTransformation();
@@ -50,7 +52,7 @@ private:
 	RenLight renLight[MAX_NUM_LIGHTS];
 	RenObject renObjectList[MAX_NUM_OBJECTS];
 	RenPrimitive renRenderingList[MAX_NUM_PRIMITAVE];
-	BMP bitmap[MAX_NUM_BMP];
+	//BMP bitmap[MAX_NUM_BMP];
 	static RenEngine* instance;
 	int numberOfLights = 0;
 	int numberOfObjects = 0;

@@ -5,7 +5,7 @@
 
 class RenCamera
 {
-private:
+public:
 	RenPoint4D location;
 	RenVector4D up, forward, right;
 	float zn, zf;

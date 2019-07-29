@@ -4,6 +4,8 @@
 #include "string.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <Windows.h>
+#include <wingdi.h>
 
 RenEngine* RenEngine::instance = 0;
 
@@ -18,10 +20,12 @@ RenEngine* RenEngine::GetInstance()
 
 RenEngine::RenEngine()
 {
+	hdc = 0;
 }
 
-void RenEngine::RenderInit()
+void RenEngine::RenderInit(HDC h)
 {
+	hdc = h;
 	LoadTriangleObject();
 	renCamera.InitCamera(10,10000);
 	RenColor ambientColor(255,255,255,1);
@@ -35,13 +39,38 @@ void RenEngine::RenderInit()
 void RenEngine::RenderLoop()
 {
 	RenVector4D worldPos(0,0,0,1);
-	LocalToProjectionTransformation(worldPos);
+	//LocalToProjectionTransformation(worldPos);
+	//TODO: clipping
 	GenerateRenderingList();
 	PreRendering();
 	Rendering();
 	ReadKeyInput();
 }
 
+void RenEngine::GenerateRenderingList()
+{
+	RenObject tmpObject;
+	for (int i = 0; i < numberOfObjects; i++)
+	{
+		tmpObject = renObjectList[i];
+		for (int j = 0; j < tmpObject.numberOfTriangles; j++)
+		{
+			RenTriangle tri = tmpObject.triangleList[j];
+			RenPrimitive p;
+			p.p[0] = tmpObject.pointList[tri.pointIndex[0]];
+			p.p[1] = tmpObject.pointList[tri.pointIndex[1]];
+			p.p[2] = tmpObject.pointList[tri.pointIndex[2]];
+			p.t[0] = tmpObject.textureList[tri.texIndex[0]];
+			p.t[1] = tmpObject.textureList[tri.texIndex[1]];
+			p.t[2] = tmpObject.textureList[tri.texIndex[2]];
+			renRenderingList[numberOfPrimitives] = p;
+			numberOfPrimitives++;
+		}
+	}
+}
+void RenEngine::PreRendering()
+{
+}
 void RenEngine::RenderExit()
 {
 }
@@ -55,7 +84,7 @@ void RenEngine::AddLight(int att, RenColor c, RenVector4D dir, RenVector4D loc)
 void RenEngine::LoadTriangleObject()
 {
 	char tmpName [] = "testTriangleObj";
-	strcpy(renObjectList[numberOfObjects].name, tmpName);
+	//strcpy(renObjectList[numberOfObjects].name, tmpName);
 	RenColor c(255, 0, 0, 1); //red
 	RenPoint4D p1(0, 5, 50, 1);
 	RenPoint4D p2(5, 0, 50, 1);
@@ -73,8 +102,10 @@ void RenEngine::LoadTriangleObject()
 	renObjectList[numberOfObjects].textureList[1] = t2;
 	renObjectList[numberOfObjects].textureList[2] = t3;
 	RenTriangle tmpTriangle(0,1,2,0,1,2);
+	
+	tmpTriangle.pointListPtr = (renObjectList[numberOfObjects].transferredPointList);
 	CalculateTriangleNormal(&tmpTriangle);
-	tmpTriangle.pointListPtr = (renObjectList[numberOfObjects].pointList);
+
 	renObjectList[numberOfObjects].triangleList[0] = tmpTriangle;
 	renObjectList[numberOfObjects].numberOfPoints = 3;
 	renObjectList[numberOfObjects].maxRadius = 5;
@@ -126,41 +157,40 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 	
 	if (pri.renderMode == PRIMITIVE_MODE_WIREFRAME)
 	{
-		DrawLine(p1.x, p1.y, p2.x, p2.y, pri.color);
-		DrawLine(p1.x, p1.y, p3.x, p3.y, pri.color);
-		DrawLine(p2.x, p2.y, p3.x, p3.y, pri.color);
+		RenColor tmpColor(255, 255, 255, 1);
+		DrawLine(p1.x, p1.y, p2.x, p2.y, tmpColor);
+		DrawLine(p1.x, p1.y, p3.x, p3.y, tmpColor);
+		DrawLine(p2.x, p2.y, p3.x, p3.y, tmpColor);
 	}
 	
 	else 
 	{
 		if (p1.y > p2.y)
-			SwapPoint4D(&p1, &p2);
+			SwapPoint4D(p1, p2);
 		if (p1.y > p3.y)
-			SwapPoint4D(&p1, &p3);
+			SwapPoint4D(p1, p3);
 		if (p2.y > p3.y)
-			SwapPoint4D(&p2, &p3);
+			SwapPoint4D(p2, p3);
 		if (p1.x > p2.x)
-			SwapPoint4D(&p1, &p2);
+			SwapPoint4D(p1, p2);
 		if (p3.x > p2.x)
-			SwapPoint4D(&p2, &p3);
+			SwapPoint4D(p2, p3);
 		
-		
-
 		if (p1.y == p2.y) 
-			DrawPrimitiveFlatTop();
+			DrawPrimitiveFlatTop(p1,p2,p3,pri.t[0],pri.t[1],pri.t[2]);
 		else if (p2.y == p3.y)
-			DrawPrimitiveFlatButton();
+			DrawPrimitiveFlatButton(p1, p2, p3, pri.t[0], pri.t[1], pri.t[2]);
 		else
 		{
 			//draw general triangle
 			float xMid = p1.x + (p3.x - p1.x)*(p2.y - p1.y)/(p3.y - p1.y);
-			float uMid = p1.u + (p3.u - p1.u)*(xMid - p1.x)/(p3.x - p1.x);
-			float vMid = p1.v + (p3.v - p1.v)*(p2.y - p1.y)/(p3.y - p1.y);
+			float uMid = pri.t[0].u + (pri.t[2].u - pri.t[0].u) * (xMid - p1.x) / (p3.x - p1.x);
+			float vMid = pri.t[0].v + (pri.t[2].v - pri.t[0].v)*(p2.y - p1.y)/(p3.y - p1.y);
 			//TODO: z buffer
 			RenPoint4D pMid(xMid, p2.y, 1, 1);
-			RenTextile tMid(uMid, vMid);
-			DrawPrimitiveFlatButton(p1, p2, pMid, t1, t2, tMid);
-			DrawPrimiviteFlatTop(pMid, p2, p3, tMid, t2, t3);
+			RenTexture tMid(uMid, vMid);
+			DrawPrimitiveFlatButton(p1, p2, pMid, pri.t[0], pri.t[1], tMid);
+			DrawPrimitiveFlatTop(pMid, p2, p3, tMid, pri.t[1], pri.t[2]);
 		}
 	}
 		
@@ -190,9 +220,9 @@ void RenEngine::DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D
 	{
 		for (float ix = xStart; ix < xEnd; ix ++)
 		{
-			tmpColor = map->data[iu][iv];
-			COLORREF color = BMPColorToCOLORREF(tmpColor);
-			SetPixel (hdc, ix, iy,color);
+			//tmpColor = map->data[iu][iv];
+			//COLORREF color = BMPColorToCOLORREF(tmpColor);
+			//SetPixel (hdc, ix, iy,color);
 			iu += dudx;
 		}
 		xStart += dxdyl;
@@ -226,9 +256,9 @@ void RenEngine::DrawPrimitiveFlatButton (RenPoint4D &p1, RenPoint4D &p2, RenPoin
 	{
 		for (float ix = xStart; ix < xEnd; ix ++)
 		{
-			tmpColor = map->data[iu][iv];
-			COLORREF color = BMPColorToCOLORREF(tmpColor);
-			SetPixel (hdc, ix, iy,color);
+			//tmpColor = map->data[iu][iv];
+			//COLORREF color = BMPColorToCOLORREF(tmpColor);
+			//SetPixel (hdc, ix, iy,color);
 			iu += dudx;
 		}
 		xStart += dxdyl;
@@ -262,10 +292,10 @@ void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renCo
 		}
 	}
 }
-RenColor BitMapFindColor (BitMap *map, float x, float y)
-{
+//RenColor BitMapFindColor (BitMap *map, float x, float y)
+//{
 	
-}
+//}
 
 void RenEngine::LocalToProjectionTransformation(RenVector4D &worldPos)
 {
@@ -275,18 +305,27 @@ void RenEngine::LocalToProjectionTransformation(RenVector4D &worldPos)
 		for (int j = 0; j < tmpObject.numberOfPoints; j ++)
 		{
 			// local to world
-			tmpObject.transferredPointList[j].x = tmpObject.pointList[j] + worldPos.x;
-			tmpObject.transferredPointList[j].y = tmpObject.pointList[j] + worldPos.y;
-			tmpObject.transferredPointList[j].z = tmpObject.pointList[j] + worldPos.z;
+			tmpObject.transferredPointList[j].x = tmpObject.pointList[j].x + worldPos.x;
+			tmpObject.transferredPointList[j].y = tmpObject.pointList[j].y + worldPos.y;
+			tmpObject.transferredPointList[j].z = tmpObject.pointList[j].z + worldPos.z;
 			//TODO: transform normal vector, from local to world space
+			for (int k = 0; k < tmpObject.numberOfTriangles; k++)
+			{
+				CalculateTriangleNormal(&(tmpObject.triangleList[k]));
+			}
+			//TODO: lighting
 			// world to camera
 			tmpObject.transferredPointList[j] = tmpObject.transferredPointList[j] * renCamera.cameraTrans;
 			// camera to projection
 			//TODO: z--> 1/z
 			tmpObject.transferredPointList[j].x = (tmpObject.transferredPointList[j].x * renCamera.zn) / tmpObject.transferredPointList[j].z;
-			tmpObject.transferredPointList[j].x = (tmpObject.transferredPointList[j].x * renCamera.zn) / tmpObject.transferredPointList[j].z;
+			tmpObject.transferredPointList[j].y = (tmpObject.transferredPointList[j].y * renCamera.zn) / tmpObject.transferredPointList[j].z;
 		}
 	}
+}
+
+void RenEngine::IsObjectOutOfBoundary()
+{
 }
 
 void RenEngine::ProjectionToViewPortTransformation()
@@ -294,48 +333,42 @@ void RenEngine::ProjectionToViewPortTransformation()
 	
 }
 
+void RenEngine::BackFaceDetection()
+{
+}
+
 void RenEngine::Lighting()
 {
-	RenObject temObject;
+	RenObject tmpObject;
 	for (int i = 0; i < numberOfObjects; i++)
 	{
 		tmpObject = renObjectList[i];
 		for (int j = 0; j < numberOfLights; j++)
 		{
-			if (renLight[j].att == REN_LIGHT_AMBIENT)
+			if (renLight[j].att == RENLIGHT_ATT_AMBIENT)
 			{
 				for (int k = 0; k<tmpObject.numberOfTriangles; k ++)
 				{
-					tmpObject.triangleList[k].color *= renLight[j].Ia;
+					//tmpObject.triangleList[k].color *= renLight[j].Ia;
 				}
 			}
-			else if (renLight[j].att == REN_LIGHT_DIRECTIONALLIGHT)
+			else if (renLight[j].att == RENLIGHT_ATT_DIRECTIONAL)
 			{
 				for (int k = 0; k < tmpObject.numberOfTriangles; k++)
 				{
-					tmpObject.triangleList[k].color = tmpObject.triangleList[k].color * renLight[j].Id * DotProduct(&(-renLight[j].direction), &(tmpObject.triangleList[k].normal));
+					//tmpObject.triangleList[k].color = tmpObject.triangleList[k].color * renLight[j].Id * DotProduct(&(-renLight[j].direction), &(tmpObject.triangleList[k].normal));
 				}
 			}
 		}
 	}
 }
 
-void RenCamera::InitCamera(float zN, float zF)
+void RenEngine::Rendering()
 {
-	zn = zN;
-	zf = zF;
-	up.SetValue (0,1,0,1);
-	forword.SetValue(0,0,1,1);
-	right.SetValue(1,0,0,1);
-	CalculateCameraTrans();
+	Rasterization();
 }
 
-void RenCamera::CalculateCameraTrans()
+void RenEngine::ReadKeyInput()
 {
-	RenMatrix m1 = RenMatrix.CreateIdentityMatrix;
-	m1[3][0] = - location.x;
-	m1[3][1] = - location.y;
-	m1[3][2] = - location.z;
-	//TODO: rotation
-	cameraTrans = m1;
 }
+

@@ -5,7 +5,7 @@
 #define RENLIGHT_ATT_DIRECTIONAL 2
 class RenLight
 {
-private:
+public:
 	int att;
 	RenColor color;
 	RenVector4D direction;
