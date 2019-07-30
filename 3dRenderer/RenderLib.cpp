@@ -43,9 +43,5 @@ void SwapPoint4D(RenPoint4D p1, RenPoint4D p2)
 
 COLORREF RenColorToCOLORREF(RenColor c)
 {
-	COLORREF ret;
-	DWORD cTmp;
-	cTmp = (DWORD)((c.alpha) << 24) + (DWORD)((c.blue) << 16) + (DWORD)((c.green) << 8) + (DWORD)(c.red);
-	ret = (DWORD)cTmp;
-	return ret;
+	return RGB(c.red, c.green, c.blue);
 }
