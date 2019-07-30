@@ -23,9 +23,12 @@ RenEngine::RenEngine()
 	hdc = 0;
 }
 
-void RenEngine::RenderInit(HDC h)
+void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 {
-	hdc = h;
+	x = x1;
+	y = y1;
+	w = w1;
+	h = h1;
 	LoadTriangleObject();
 	renCamera.InitCamera(10,10000);
 	RenColor ambientColor(255,255,255,1);
@@ -63,6 +66,8 @@ void RenEngine::GenerateRenderingList()
 			p.t[0] = tmpObject.textureList[tri.texIndex[0]];
 			p.t[1] = tmpObject.textureList[tri.texIndex[1]];
 			p.t[2] = tmpObject.textureList[tri.texIndex[2]];
+			p.renderMode = PRIMITIVE_MODE_WIREFRAME;
+			p.state = PRIMITIVE_STATE_ACTIVE;
 			renRenderingList[numberOfPrimitives] = p;
 			numberOfPrimitives++;
 		}
@@ -86,8 +91,8 @@ void RenEngine::LoadTriangleObject()
 	char tmpName [] = "testTriangleObj";
 	//strcpy(renObjectList[numberOfObjects].name, tmpName);
 	RenColor c(255, 0, 0, 1); //red
-	RenPoint4D p1(0, 5, 50, 1);
-	RenPoint4D p2(5, 0, 50, 1);
+	RenPoint4D p1(0, 50, 50, 1);
+	RenPoint4D p2(50, 0, 50, 1);
 	RenPoint4D p3(0, 0, 50, 1);
 	p1.SetColor(c);
 	p2.SetColor(c);
@@ -157,7 +162,7 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 	
 	if (pri.renderMode == PRIMITIVE_MODE_WIREFRAME)
 	{
-		RenColor tmpColor(255, 255, 255, 1);
+		RenColor tmpColor(255, 0, 0, 1);
 		DrawLine(p1.x, p1.y, p2.x, p2.y, tmpColor);
 		DrawLine(p1.x, p1.y, p3.x, p3.y, tmpColor);
 		DrawLine(p2.x, p2.y, p3.x, p3.y, tmpColor);
@@ -271,6 +276,7 @@ void RenEngine::DrawPrimitiveFlatButton (RenPoint4D &p1, RenPoint4D &p2, RenPoin
 void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renColor)
 {
 	COLORREF color = RenColorToCOLORREF(renColor);
+	color = RGB(0, 255, 0);
 	if ((x2-x1)<(y2-y1))
 	{
 		float ix = x1;

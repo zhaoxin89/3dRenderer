@@ -6,7 +6,7 @@
 #include <windows.h>
 #define MAX_OBJECT_POINTS 256
 #define MAX_NUM_TRIANGLES 64
-#define MAX_NUM_TEXTURES 2
+#define MAX_NUM_TEXTURES 64
 
 
 #define PRIMITIVE_STATE_ACTIVE 0

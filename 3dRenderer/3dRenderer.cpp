@@ -45,37 +45,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-	myRenderer = RenEngine::GetInstance();
-
-	myRenderer->RenderInit(Hdc);
-	while (TRUE)
-	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE));
-		{
-			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-		}
-		if (msg.message == WM_QUIT)
-			break;
-
-		myRenderer->RenderLoop();
-	}
-	
-	myRenderer->RenderExit();
-	free(myRenderer);
-	myRenderer = NULL;
-    //// Main message loop:
-    //while (GetMessage(&msg, nullptr, 0, 0))
-    //{
-    //    if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-    //    {
-    //        TranslateMessage(&msg);
-    //        DispatchMessage(&msg);
-    //    }
-    //}
+    // Main message loop:
+    while (GetMessage(&msg, nullptr, 0, 0))
+    {
+        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
 
     return (int) msg.wParam;
 }
@@ -130,7 +108,12 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
       return FALSE;
    }
 
-   Hdc = GetDC(hWnd);
+   // Renderer Init
+   RECT rect;
+   GetClientRect(hWnd, &rect);
+   myRenderer = RenEngine::GetInstance();
+   myRenderer->RenderInit(rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+   
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
@@ -149,6 +132,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	static HDC hdcBackBuffer;
+	static HBITMAP hBitmap;
+	static HBITMAP hOldBitmap;
+	static int cxClients, cyClients;
     switch (message)
     {
     case WM_COMMAND:
@@ -168,15 +155,39 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+	case WM_CREATE:
+	    {
+		RECT rect;
+		GetClientRect(hWnd, &rect);
+		hdcBackBuffer = CreateCompatibleDC(0);
+		HDC hdc = GetDC(hWnd);
+		cxClients = rect.right;
+		cyClients = rect.bottom;
+		hBitmap = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+		hOldBitmap = (HBITMAP)SelectObject(hdcBackBuffer, hBitmap);
+		ReleaseDC(hWnd, hdc);
+	    }
+		break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Add any drawing code that uses hdc here...
+			//BitBlt(hdcBackBuffer, 0, 0, cxClients, cyClients, NULL, NULL, NULL, BLACKNESS);
+			myRenderer->SetDC(hdcBackBuffer);
+			myRenderer->RenderLoop();
+			
+			BitBlt(ps.hdc, 0, 0, cxClients, cyClients, hdcBackBuffer, 0, 0, SRCCOPY);
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
+		SelectObject(hdcBackBuffer, hOldBitmap);
+		DeleteDC(hdcBackBuffer);
+		DeleteObject(hBitmap);
+		myRenderer->RenderExit();
+		delete myRenderer;
+		myRenderer = NULL;
         PostQuitMessage(0);
         break;
     default:

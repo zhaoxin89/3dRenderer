@@ -1,6 +1,6 @@
 ﻿  Engine.cpp
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(278,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(280,18): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(288,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(290,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(284,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(286,18): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(294,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(296,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
   3dRenderer.vcxproj -> D:\Study\code\3dRenderer\3dRenderer\Debug\3dRenderer.exe

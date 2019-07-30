@@ -14,9 +14,14 @@ class RenEngine
 public:
 	static RenEngine* GetInstance();
 
-	void RenderInit(HDC h);
+	void RenderInit(int x1, int y1, int w1, int h1);
 	void RenderLoop();
 	void RenderExit();
+
+	inline void SetDC(HDC h)
+	{
+		hdc = h;
+	}
 
 private:
 
@@ -57,6 +62,8 @@ private:
 	int numberOfLights = 0;
 	int numberOfObjects = 0;
 	int numberOfPrimitives = 0;
+
+	int x, y, w, h;
 	HDC hdc;
 
 	RenEngine();
