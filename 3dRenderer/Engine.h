@@ -2,12 +2,15 @@
 #include "RendererLib.h"
 #include "Camera.h"
 #include "Light.h"
+#include <string>
 
 #define MAX_NUM_TEXTILES 2
 #define MAX_NUM_LIGHTS 3
 #define MAX_NUM_OBJECTS 4
-#define MAX_NUM_PRIMITAVE 1024
+#define MAX_NUM_PRIMITAVE 8192
 #define MAX_NUM_BMP 2
+
+using namespace std;
 
 class RenEngine
 {
@@ -27,7 +30,7 @@ private:
 
 	// test function: load one triangle
 	void LoadTriangleObject();
-
+	void LoadModelASE(const string& folderPath, const string& fileName);
 	void LoadObjectFromFile(char* filename);
 
 	void AddLight(int att, RenColor c, RenVector4D dir, RenVector4D loc);

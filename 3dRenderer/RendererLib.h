@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <windows.h>
-#define MAX_OBJECT_POINTS 256
-#define MAX_NUM_TRIANGLES 64
-#define MAX_NUM_TEXTURES 64
+#define MAX_OBJECT_POINTS 8192
+#define MAX_NUM_TRIANGLES 8192
+#define MAX_NUM_TEXTURES 8192
 
 
 #define PRIMITIVE_STATE_ACTIVE 0
@@ -36,7 +36,11 @@ typedef struct RenPoint2D
 	{
 		x = x1; y = y1;
 	}
-}RenPoint2D, * RenPoint2DPtr;
+	RenPoint2D(float f[2])
+	{
+		x = f[0]; y = f[1]; 
+	}
+}RenPoint2D, RenVector2D, * RenVector2DPtr, * RenPoint2DPtr;
 
 typedef struct RenPoint3D
 {
@@ -44,6 +48,10 @@ typedef struct RenPoint3D
 	RenPoint3D(float x1 = 0, float y1 = 0, float z1 = 0)
 	{
 		x = x1; y = y1; z = z1; 
+	}
+	RenPoint3D(float f[3])
+	{
+		x = f[0]; y = f[1]; z = f[2];
 	}
 }RenPoint3D, RenVector3D, *RenVector3DPtr, * RenPoint3DPtr;
 
@@ -60,6 +68,11 @@ typedef struct RenPoint4D
 	{ 
 		x = x1; y = y1; z = z1; w = w1;
 	}
+	RenPoint4D(float f[4])
+	{
+		x = f[0]; y = f[1]; z = f[2]; w = f[3];
+	}
+
 	RenPoint4D(RenPoint4D& p1, RenPoint4D& p2)
 	{
 		x = p2.x - p1.x;
@@ -67,6 +80,7 @@ typedef struct RenPoint4D
 		z = p2.z - p1.z;
 		w = 1;
 	}
+	
 	void SetValue(float x1, float y1, float z1, float w1)
 	{
 		x = x1; y = y1; z = z1; w = w1;
@@ -109,6 +123,28 @@ typedef struct RenTexture
 		u = u1; v = v1;
 	}
 }RenTexture, * RenTexturePtr;
+
+typedef struct RenBMP
+{
+	unsigned char *buffer;
+	int width;
+	int height;
+	RGBQUAD* pColorTable;
+	int biBitCount;
+	int lineByte;
+}RenBMP, *RenBMPPtr;
+
+typedef struct RenTexture
+{
+	RenBMPPtr bmp;
+};
+typedef struct RenMaterial
+{
+	RenVector4D ambient;
+	RenVector4D diffuse;
+	RenVector4D specular;
+	float shininess;
+} RenMaterial, *RenMaterialPtr;
 
 typedef struct RenTriangle
 {
@@ -161,6 +197,12 @@ RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v);
 
 void Vector4DNormalize(RenVector4D* v);
 void CalculateTriangleNormal(RenTriangle* tri);
+
+//vector<string> divideStr(const string& str, const string& dividerChars);
+RenVector4D fscanVector4(FILE* fp);
+RenVector3D fscanVector3(FILE* fp);
+RenVector2D fscanVector2(FILE* fp);
+
 
 RenMatrix4D CreateIdentityMatrix();
 void SwapPoint4D(RenPoint4D p1, RenPoint4D p2);

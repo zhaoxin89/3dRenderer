@@ -1,5 +1,8 @@
 #include "RendererLib.h"
+#include <cassert>
+#include <string>
 
+using namespace std;
 RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v)
 {
 	RenVector4D ret;
@@ -44,4 +47,29 @@ void SwapPoint4D(RenPoint4D p1, RenPoint4D p2)
 COLORREF RenColorToCOLORREF(RenColor c)
 {
 	return RGB(c.red, c.green, c.blue);
+}
+
+RenVector4D fscanVector4(FILE* fp) {
+	assert(fp);
+	float arr[4];
+	for (int i = 0; i < 4; i++) {
+		fscanf(fp, "%f", &arr[i]);
+	}
+	return RenVector4D(arr);
+}
+RenVector3D fscanVector3(FILE* fp) {
+	assert(fp);
+	float arr[3];
+	for (int i = 0; i < 3; i++) {
+		fscanf(fp, "%f", &arr[i]);
+	}
+	return RenVector3D(arr);
+}
+RenVector2D fscanVector2(FILE* fp) {
+	assert(fp);
+	float arr[2];
+	for (int i = 0; i < 2; i++) {
+		fscanf(fp, "%f", &arr[i]);
+	}
+	return RenVector2D(arr);
 }

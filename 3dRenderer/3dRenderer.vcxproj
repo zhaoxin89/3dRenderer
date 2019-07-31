@@ -160,6 +160,7 @@
     <ClInclude Include="RendererLib.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3dRenderer.cpp" />
@@ -167,6 +168,7 @@
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="RenderLib.cpp" />
+    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="3dRenderer.rc" />
