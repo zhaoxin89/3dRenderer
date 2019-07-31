@@ -6,7 +6,7 @@
 #include <windows.h>
 #define MAX_OBJECT_POINTS 8192
 #define MAX_NUM_TRIANGLES 8192
-#define MAX_NUM_TEXTURES 8192
+#define MAX_NUM_TEXTURES 8
 
 
 #define PRIMITIVE_STATE_ACTIVE 0
@@ -115,13 +115,18 @@ typedef struct RenLine4D
 	RenPoint4D p1, p2;
 }RenLine4D, * RenLine4DPtr;
 
-typedef struct RenTexture
+typedef struct RenTextureCoor
 {
 	float u, v;
-	RenTexture(float u1 = 0, float v1 = 0)
+	RenTextureCoor(float u1 = 0, float v1 = 0)
 	{
 		u = u1; v = v1;
 	}
+}RenTextureCoor, * RenTextureCoorPtr;
+
+typedef struct RenTexture
+{
+	RenBMPPtr bmp;
 }RenTexture, * RenTexturePtr;
 
 typedef struct RenBMP
@@ -134,10 +139,7 @@ typedef struct RenBMP
 	int lineByte;
 }RenBMP, *RenBMPPtr;
 
-typedef struct RenTexture
-{
-	RenBMPPtr bmp;
-};
+
 typedef struct RenMaterial
 {
 	RenVector4D ambient;
@@ -152,24 +154,24 @@ typedef struct RenTriangle
 	int texIndex[3];
 	RenVector4D normal;
 	RenPoint4DPtr pointListPtr;
-	RenTexturePtr textureListPtr;
+	RenTextureCoorPtr textureCoorListPtr;
 	float angleWithSunLight;
+
 	RenTriangle (int pi1 = 0, int pi2 = 1, int pi3 = 2, int ti1 = 0, int ti2 = 1, int ti3 = 2)
 	{
 		pointIndex[0] = pi1; pointIndex[1] = pi2; pointIndex[2] = pi3;
 		texIndex[0] = ti1; texIndex[1] = ti2; texIndex[2] = ti3;
 		normal.SetValue(1, 0, 0, 1);
 		pointListPtr = 0;
-		textureListPtr = 0;
+		textureCoorListPtr = 0;
 		angleWithSunLight = 0;
 	}
-
 }RenTriangle, * RenTrianglePtr;
 
 typedef struct RenPrimitive
 {
 	RenPoint4D p[3];
-	RenTexture t[3];
+	RenTextureCoor t[3];
 	RenColor c; // used for wireframe mode
 	//RenVector3D normal;
 	//TODO: 
@@ -184,7 +186,7 @@ typedef struct RenObject
 	char name[64];
 	RenPoint4D pointList[MAX_OBJECT_POINTS];
 	RenPoint4D transferredPointList[MAX_OBJECT_POINTS];
-	RenTexture textureList[MAX_NUM_TEXTURES];
+	RenTextureCoor textureCoorList[MAX_NUM_TEXTURES];
 	RenTriangle triangleList[MAX_NUM_TRIANGLES];
 	//RenTriangle transferredTriangleList[MAX_NUM_TRIANGLES];
 	int numberOfPoints;

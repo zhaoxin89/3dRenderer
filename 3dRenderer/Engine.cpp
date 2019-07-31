@@ -69,9 +69,9 @@ void RenEngine::GenerateRenderingList()
 			p.p[0] = tmpObject.transferredPointList[tri.pointIndex[0]];
 			p.p[1] = tmpObject.transferredPointList[tri.pointIndex[1]];
 			p.p[2] = tmpObject.transferredPointList[tri.pointIndex[2]];
-			p.t[0] = tmpObject.textureList[tri.texIndex[0]];
-			p.t[1] = tmpObject.textureList[tri.texIndex[1]];
-			p.t[2] = tmpObject.textureList[tri.texIndex[2]];
+			p.t[0] = tmpObject.textureCoorList[tri.texIndex[0]];
+			p.t[1] = tmpObject.textureCoorList[tri.texIndex[1]];
+			p.t[2] = tmpObject.textureCoorList[tri.texIndex[2]];
 			p.renderMode = PRIMITIVE_MODE_WIREFRAME;
 			p.state = PRIMITIVE_STATE_ACTIVE;
 			renRenderingList[numberOfPrimitives] = p;
@@ -106,12 +106,12 @@ void RenEngine::LoadTriangleObject()
 	renObjectList[numberOfObjects].pointList[0] = p1;
 	renObjectList[numberOfObjects].pointList[1] = p2;
 	renObjectList[numberOfObjects].pointList[2] = p3;
-	RenTexture t1(0, 0);
-	RenTexture t2(1, 1);
-	RenTexture t3(0, 1);
-	renObjectList[numberOfObjects].textureList[0] = t1;
-	renObjectList[numberOfObjects].textureList[1] = t2;
-	renObjectList[numberOfObjects].textureList[2] = t3;
+	RenTextureCoor t1(0, 0);
+	RenTextureCoor t2(1, 1);
+	RenTextureCoor t3(0, 1);
+	renObjectList[numberOfObjects].textureCoorList[0] = t1;
+	renObjectList[numberOfObjects].textureCoorList[1] = t2;
+	renObjectList[numberOfObjects].textureCoorList[2] = t3;
 	RenTriangle tmpTriangle(0,1,2,0,1,2);
 	
 	tmpTriangle.pointListPtr = (renObjectList[numberOfObjects].transferredPointList);
@@ -127,8 +127,8 @@ void RenEngine::LoadTriangleObject()
 
 void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 {
-		vector<RenTexturePtr>& textureList = m_textureList;
-		vector<RenMaterialPtr*>& materialList = m_materialList;
+		RenTexturePtr textureList = renTextureList;
+		RenMaterialPtr materialList = renMaterialList;
 
 		//------------------full path of file
 		string fileFullPath = folderPath + "/" + fileName;
@@ -140,22 +140,22 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 			assert(false);
 		}
 		//------------------read file
-		vector<RenVector4D> posList;
-		vector<RenTriangle> faceList;
+		vector<RenVector3D> posList;
+		vector<RenVector3D> faceList;
 		int materialRef = 0;
-		vector<RenVector2D> tvertexList;
-		vector<RenTriangle> tfaceList;
+		vector<RenTextureCoor> tvertexList;
+		vector<RenVector3D> tfaceList;
 
-		vector<RenVector4D> faceNormList;
-		vector<RenVector4D> faceV0NormList;
-		vector<RenVector4D> faceV1NormList;
-		vector<RenVector4D> faceV2NormList;
+		vector<RenVector3D> faceNormList;
+		vector<RenVector3D> faceV0NormList;
+		vector<RenVector3D> faceV1NormList;
+		vector<RenVector3D> faceV2NormList;
 
-		vector<RenVector4D> ambientList;
-		vector<RenVector4D> diffuseList;
+		vector<RenVector3D> ambientList;
+		vector<RenVector3D> diffuseList;
 		vector<float> shineStrengthList;
 		vector<float> shineList;
-		vector<RenVector4D> specularList;
+		vector<RenVector3D> specularList;
 
 		vector<string> texFileNameList;
 
@@ -192,9 +192,10 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 				fscanStr(fp, "{");
 				fscanStr(fp, "*MATERIAL_NAME"); fscanOneQuotation(fp);
 				fscanStr(fp, "*MATERIAL_CLASS"); fscanOneQuotation(fp);
-				fscanStr(fp, "*MATERIAL_AMBIENT"); Cc3dVector4 ambient = fscanVector3(fp); ambient.setw(1);
-				fscanStr(fp, "*MATERIAL_DIFFUSE"); Cc3dVector4 diffuse = fscanVector3(fp); diffuse.setw(1);
-				fscanStr(fp, "*MATERIAL_SPECULAR"); Cc3dVector4 specular = fscanVector3(fp); specular.setw(1);
+				
+				fscanStr(fp, "*MATERIAL_AMBIENT"); RenVector3D ambient = fscanVector3(fp);
+				fscanStr(fp, "*MATERIAL_DIFFUSE"); RenVector3D diffuse = fscanVector3(fp);
+				fscanStr(fp, "*MATERIAL_SPECULAR"); RenVector3D specular = fscanVector3(fp);
 				fscanStr(fp, "*MATERIAL_SHINE"); float shine = fscanFloat(fp);
 				fscanStr(fp, "*MATERIAL_SHINESTRENGTH"); float shineStrength = fscanFloat(fp);
 				fscanStr(fp, "*MATERIAL_TRANSPARENCY"); fscanFloat(fp);
@@ -272,7 +273,7 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 			fscanStr(fp, "*MESH_VERTEX_LIST");
 			fscanStr(fp, "{");
 			for (int vertexIndex = 0; vertexIndex < vertexCount; vertexIndex++) {
-				fscanStr(fp, "*MESH_VERTEX");    int vID = fscanInt(fp);	Cc3dVector4 pos = fscanVector3(fp); pos.setw(1);
+				fscanStr(fp, "*MESH_VERTEX");    int vID = fscanInt(fp);	RenVector3D pos = fscanVector3(fp); 
 				assert(vertexIndex == vID);
 				posList.push_back(pos);
 			}
@@ -294,7 +295,7 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 				fscanStr(fp, "*MESH_SMOOTHING"); fscanInt(fp);
 				fscanStr(fp, "*MESH_MTLID"); fscanInt(fp);
 
-				Cc3dIDTriangle face(vIDA, vIDB, vIDC);
+				RenVector3D face(vIDA, vIDB, vIDC);
 				faceList.push_back(face);
 
 			}
@@ -303,9 +304,9 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 			fscanStr(fp, "*MESH_TVERTLIST");
 			fscanStr(fp, "{");
 			for (int tvertexIndex = 0; tvertexIndex < tvertexCount; tvertexIndex++) {
-				fscanStr(fp, "*MESH_TVERT"); int tvertexID = fscanInt(fp);	Cc3dVector4 texCoord = fscanVector3(fp);
+				fscanStr(fp, "*MESH_TVERT"); int tvertexID = fscanInt(fp);	RenVector3D texCoord = fscanVector3(fp);
 				assert(tvertexIndex == tvertexID);
-				tvertexList.push_back(Cc3dVector2(texCoord.x(), texCoord.y()));
+				tvertexList.push_back(RenTextureCoor(texCoord.x, texCoord.y));
 			}
 			fscanStr(fp, "}");
 			fscanStr(fp, "*MESH_NUMTVFACES"); int tfaceCount = fscanInt(fp);
@@ -318,7 +319,7 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 				int tvID0 = fscanInt(fp);
 				int tvID1 = fscanInt(fp);
 				int tvID2 = fscanInt(fp);
-				Cc3dIDTriangle tface(tvID0, tvID1, tvID2);
+				RenVector3D tface(tvID0, tvID1, tvID2);
 				tfaceList.push_back(tface);
 			}
 			fscanStr(fp, "}");
@@ -330,11 +331,11 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 			fscanStr(fp, "*MESH_NORMALS");
 			fscanStr(fp, "{");
 			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++) {
-				fscanStr(fp, "*MESH_FACENORMAL"); int faceID = fscanInt(fp);	Cc3dVector4 faceNorm = fscanVector3(fp);	faceNorm.setw(0);
+				fscanStr(fp, "*MESH_FACENORMAL"); int faceID = fscanInt(fp);	RenVector3D faceNorm = fscanVector3(fp);	
 				assert(faceIndex == faceID);
-				fscanStr(fp, "*MESH_VERTEXNORMAL"); int vID0 = fscanInt(fp);	Cc3dVector4 norm0 = fscanVector3(fp);  norm0.setw(0);
-				fscanStr(fp, "*MESH_VERTEXNORMAL"); int vID1 = fscanInt(fp);	Cc3dVector4 norm1 = fscanVector3(fp);  norm1.setw(0);
-				fscanStr(fp, "*MESH_VERTEXNORMAL"); int vID2 = fscanInt(fp);	Cc3dVector4 norm2 = fscanVector3(fp);  norm2.setw(0);
+				fscanStr(fp, "*MESH_VERTEXNORMAL"); int vID0 = fscanInt(fp);	RenVector3D norm0 = fscanVector3(fp);  
+				fscanStr(fp, "*MESH_VERTEXNORMAL"); int vID1 = fscanInt(fp);	RenVector3D norm1 = fscanVector3(fp);  
+				fscanStr(fp, "*MESH_VERTEXNORMAL"); int vID2 = fscanInt(fp);	RenVector3D norm2 = fscanVector3(fp);  
 				faceNormList.push_back(faceNorm);
 				faceV0NormList.push_back(norm0);
 				faceV1NormList.push_back(norm1);
@@ -353,7 +354,7 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 		{
 			//----material and texture
 			const int materialIDBase = (int)m_materialList.size();
-			const int textureIDBase = (int)m_textureList.size();
+			const int textureIDBase = (int)m_textureCoorList.size();
 			const int materialCount = (int)ambientList.size();
 			for (int materialIndex = 0; materialIndex < materialCount; materialIndex++) {
 				Cc3dMaterial* material = new Cc3dMaterial();
@@ -366,7 +367,7 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 				string texFilePath = folderPath + "/" + texFileNameList[materialIndex];
 				bool initTexSucc = texture->initWithFile(texFilePath);
 				assert(initTexSucc);
-				m_textureList.push_back(texture);
+				m_textureCoorList.push_back(texture);
 
 			}
 
@@ -486,7 +487,7 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 			float vMid = pri.t[0].v + (pri.t[2].v - pri.t[0].v)*(p2.y - p1.y)/(p3.y - p1.y);
 			//TODO: z buffer
 			RenPoint4D pMid(xMid, p2.y, 1, 1);
-			RenTexture tMid(uMid, vMid);
+			RenTextureCoor tMid(uMid, vMid);
 			DrawPrimitiveFlatButton(p1, p2, pMid, pri.t[0], pri.t[1], tMid);
 			DrawPrimitiveFlatTop(pMid, p2, p3, tMid, pri.t[1], pri.t[2]);
 		}
@@ -494,7 +495,7 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 		
 }
 
-void RenEngine::DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, RenTexture &t1, RenTexture &t2, RenTexture &t3)
+void RenEngine::DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, RenTextureCoor &t1, RenTextureCoor &t2, RenTextureCoor &t3)
 {
 	//assume that p1.y = p2.y
 	float dy = p3.y - p1.y;
@@ -530,7 +531,7 @@ void RenEngine::DrawPrimitiveFlatTop (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D
 	}
 }
 
-void RenEngine::DrawPrimitiveFlatButton (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, RenTexture &t1, RenTexture &t2, RenTexture &t3)
+void RenEngine::DrawPrimitiveFlatButton (RenPoint4D &p1, RenPoint4D &p2, RenPoint4D &p3, RenTextureCoor &t1, RenTextureCoor &t2, RenTextureCoor &t3)
 {
 	//assume that p3.y = p2.y
 	float dy = p3.y - p1.y;

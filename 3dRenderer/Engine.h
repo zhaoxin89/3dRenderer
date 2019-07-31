@@ -4,7 +4,8 @@
 #include "Light.h"
 #include <string>
 
-#define MAX_NUM_TEXTILES 2
+#define MAX_NUM_TEXTURE_COOR 8192
+#define MAX_NUM_MATIRIALS 8
 #define MAX_NUM_LIGHTS 3
 #define MAX_NUM_OBJECTS 4
 #define MAX_NUM_PRIMITAVE 8192
@@ -51,12 +52,14 @@ private:
 
 	void Rasterization();
 	void DrawPrimitive(RenPrimitive& pri);
-	void DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTexture& t1, RenTexture& t2, RenTexture& t3);
-	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTexture& t1, RenTexture& t2, RenTexture& t3);
+	void DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3);
+	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3);
 	void DrawLine(float x1, float y1, float x2, float y2, RenColor renColor);
 private:
 	RenCamera renCamera;
-	RenTexture renTexture[MAX_NUM_TEXTURES];
+	RenTextureCoor renTextureCoorList[MAX_NUM_TEXTURE_COOR];
+	RenTexture renTextureList[MAX_NUM_TEXTURES];
+	RenMaterial renMaterialList[MAX_NUM_MATIRIALS];
 	RenLight renLight[MAX_NUM_LIGHTS];
 	RenObject renObjectList[MAX_NUM_OBJECTS];
 	RenPrimitive renRenderingList[MAX_NUM_PRIMITAVE];
