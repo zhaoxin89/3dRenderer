@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <string>
 #include <vector>
-
+#define PI 3.1415926
 using namespace std;
 #pragma once
 

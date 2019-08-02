@@ -48,8 +48,8 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 }
 void RenEngine::RenderLoop()
 {
-	RenVector4D worldPos(0,0,80,1);
-	LocalToWorldTransformation(worldPos);
+	RenVector4D worldPos(0,0,200,1);
+	LocalToWorldTransformation(worldPos, -PI/2, 0, 0, 1);
 	WorldToCameraTransformation();
 	CameraToProjectionTransformation();
 	//TODO: clipping
@@ -382,6 +382,11 @@ void RenEngine::LoadObjectFormModelASE(const string& folderPath, const string& f
 				tmpObj->pointList[posIndex].y = posList[posIndex].y;
 				tmpObj->pointList[posIndex].z = posList[posIndex].z;
 				tmpObj->pointList[posIndex].w = 1;
+
+				tmpObj->transferredPointList[posIndex].x = posList[posIndex].x;
+				tmpObj->transferredPointList[posIndex].y = posList[posIndex].y;
+				tmpObj->transferredPointList[posIndex].z = posList[posIndex].z;
+				tmpObj->transferredPointList[posIndex].w = 1;
 			}
 			int faceCnt = (int)faceList.size();
 			renObjectList[numberOfObjects].numberOfTriangles = faceCnt;
@@ -565,23 +570,25 @@ void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renCo
 	//COLORREF color = RGB(0, 255, 0);
 	if ((abs(x2-x1))<(abs(y2-y1)))
 	{
-		float ix = x1;
-		float dx = (x2 - x1)/(y2 - y1);
+		float dx = (x2 - x1) / (y2 - y1);
+		float ix = ceil(x1) - dx*(y1 - ceil(y1));
+		
 		int sign = y1 < y2 ? 1: -1;
-		for (int iy = y1; iy != (int)y2; iy+=sign)
+		for (int iy = ceil(y1); iy <= (ceil(y2)-1); iy += sign)
 		{
-			SetPixel(hdc, ix, iy, color);
+			SetPixel(hdc, ceil(ix), iy, color);
 			ix += dx;
 		}
 	}
 	else
 	{
-		float iy = y1;
-		float dy = (y2-y1)/(x2-x1);
+		float dy = (y2 - y1) / (x2 - x1);
+		float iy = ceil(y1) - dy*(y1 - ceil(y1));
+		
 		int sign = x1 < x2 ? 1 : -1;
-		for (int ix = x1; ix != (int)x2; ix += sign)
+		for (int ix = ceil(x1); ix <= ceil(x2)-1; ix += sign)
 		{
-			SetPixel(hdc, ix, iy, color);
+			SetPixel(hdc, ix, ceil(iy), color);
 			iy += dy;
 		}
 	}
@@ -591,18 +598,27 @@ void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renCo
 	
 //}
 
-void RenEngine::LocalToWorldTransformation(RenVector4D &worldPos)
+void RenEngine::LocalToWorldTransformation(RenVector4D& worldPos, float radX, float radY, float radZ, float scale)
 {
 	for (int i = 0; i < numberOfObjects; i ++)
 	{
 		RenObjectPtr tmpObject = &(renObjectList[i]);
 		for (int j = 0; j < tmpObject->numberOfPoints; j ++)
 		{
-			// local to world
-			tmpObject->transferredPointList[j].x = tmpObject->pointList[j].x + worldPos.x;
-			tmpObject->transferredPointList[j].y = tmpObject->pointList[j].y + worldPos.y;
-			tmpObject->transferredPointList[j].z = tmpObject->pointList[j].z + worldPos.z;
 			//TODO: transform normal vector, from local to world space
+
+			RotateAroundXAxis(tmpObject->transferredPointList[j], radX);
+			RotateAroundYAxis(tmpObject->transferredPointList[j], radY);
+			RotateAroundZAxis(tmpObject->transferredPointList[j], radZ);
+
+			tmpObject->transferredPointList[j].x /= scale;
+			tmpObject->transferredPointList[j].y /= scale;
+			tmpObject->transferredPointList[j].z /= scale;
+
+			// local to world
+			tmpObject->transferredPointList[j].x = tmpObject->transferredPointList[j].x + worldPos.x;
+			tmpObject->transferredPointList[j].y = tmpObject->transferredPointList[j].y + worldPos.y;
+			tmpObject->transferredPointList[j].z = tmpObject->transferredPointList[j].z + worldPos.z;
 		}
 	}
 }

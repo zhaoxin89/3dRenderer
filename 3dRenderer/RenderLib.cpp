@@ -79,3 +79,21 @@ RenVector4D vector3DTo4D(RenVector3D v3d)
 	ret.SetValue(v3d.x, v3d.y, v3d.z, 1);
 	return ret;
 }
+
+void RotateAroundXAxis(RenVector4D& p, float rad)
+{
+	p.y = p.y * cos(rad) - p.z * sin(rad);
+	p.z = p.y * sin(rad) + p.z * cos(rad);
+}
+
+void RotateAroundYAxis(RenVector4D& p, float rad)
+{
+	p.x = p.x * cos(rad) + p.z * sin(rad);
+	p.z = - p.x * sin(rad) + p.z * cos(rad);
+}
+
+void RotateAroundZAxis(RenVector4D& p, float rad)
+{
+	p.x = p.x * cos(rad) - p.y * sin(rad);
+	p.y = p.x * sin(rad) + p.y * cos(rad);
+}

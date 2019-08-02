@@ -45,7 +45,7 @@ private:
 	void Rendering();
 	void ReadKeyInput();
 
-	void LocalToWorldTransformation(RenVector4D &worldPos);
+	void LocalToWorldTransformation(RenVector4D &worldPos, float radX, float radY, float radZ, float scale);
 	void WorldToCameraTransformation();
 	void CameraToProjectionTransformation();
 	void IsObjectOutOfBoundary();

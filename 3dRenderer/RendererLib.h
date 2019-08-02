@@ -261,3 +261,7 @@ void SwapPoint4D(RenPoint4D p1, RenPoint4D p2);
 COLORREF RenColorToCOLORREF(RenColor c);
 
 RenVector4D vector3DTo4D(RenVector3D v3d);
+
+void RotateAroundXAxis(RenVector4D& p, float rad);
+void RotateAroundYAxis(RenVector4D& p, float rad);
+void RotateAroundZAxis(RenVector4D& p, float rad);
