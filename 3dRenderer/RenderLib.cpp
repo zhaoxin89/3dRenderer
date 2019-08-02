@@ -22,10 +22,7 @@ void Vector4DNormalize(RenVector4D* v)
 }
 void CalculateTriangleNormal(RenTriangle* tri)
 {
-	RenVector4D v1(tri->pointListPtr[tri->pointIndex[1]], tri->pointListPtr[tri->pointIndex[0]]);
-	RenVector4D v2(tri->pointListPtr[tri->pointIndex[2]], tri->pointListPtr[tri->pointIndex[0]]);
-	tri->normal = CalculateCrossProduct(v1, v2);
-	Vector4DNormalize(&(tri->normal));
+
 }
 
 RenMatrix4D CreateIdentityMatrix()
@@ -63,7 +60,9 @@ RenVector3D fscanVector3(FILE* fp) {
 	for (int i = 0; i < 3; i++) {
 		fscanf(fp, "%f", &arr[i]);
 	}
-	return RenVector3D(arr);
+	RenVector3D ret;
+	ret.SetValue(arr[0], arr[1], arr[2]);
+	return ret;
 }
 RenVector2D fscanVector2(FILE* fp) {
 	assert(fp);
@@ -72,4 +71,11 @@ RenVector2D fscanVector2(FILE* fp) {
 		fscanf(fp, "%f", &arr[i]);
 	}
 	return RenVector2D(arr);
+}
+
+RenVector4D vector3DTo4D(RenVector3D v3d)
+{
+	RenVector4D ret;
+	ret.SetValue(v3d.x, v3d.y, v3d.z, 1);
+	return ret;
 }

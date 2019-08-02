@@ -7,14 +7,11 @@
 #define MAX_OBJECT_POINTS 8192
 #define MAX_NUM_TRIANGLES 8192
 #define MAX_NUM_TEXTURES 8
-
+#define MAX_NUM_TEXTURE_COOR 8192
+#define MAX_NUM_MATIRIALS 8
 
 #define PRIMITIVE_STATE_ACTIVE 0
 #define PRIMITIVE_STATE_NON_ACTIVE 1
-
-#define PRIMITIVE_MODE_WIREFRAME 0
-#define PRIMITIVE_MODE_PURE_COLOR 1
-#define PRIMITIVE_MODE_TEXTURE 2
 
 typedef struct RenColor
 {
@@ -26,6 +23,10 @@ typedef struct RenColor
 	RenColor(unsigned char r = 255, unsigned char g = 0, unsigned char b = 0, unsigned char a = 1)
 	{
 		red = r; green = g; blue = b; alpha = a;
+	}
+	void setValue(unsigned char a, unsigned char b, unsigned g, unsigned r)
+	{
+		alpha = a; blue = b; green = g; red = r;
 	}
 }RenColor, * RenColorPtr;
 
@@ -45,13 +46,22 @@ typedef struct RenPoint2D
 typedef struct RenPoint3D
 {
 	float x, y, z;
+	
 	RenPoint3D(float x1 = 0, float y1 = 0, float z1 = 0)
 	{
 		x = x1; y = y1; z = z1; 
 	}
-	RenPoint3D(float f[3])
+	RenPoint3D(float *fp)
 	{
-		x = f[0]; y = f[1]; z = f[2];
+		x = *fp; y = *(fp + 1); z = *(fp + 2);
+	}
+	void SetValue(float x1, float y1, float z1)
+	{
+		x = x1; y = y1; z = z1;
+	}
+	void SetValue(const RenPoint3D &p)
+	{
+		x = p.x; y = p.y; z = p.z;
 	}
 }RenPoint3D, RenVector3D, *RenVector3DPtr, * RenPoint3DPtr;
 
@@ -64,6 +74,7 @@ typedef struct RenPoint4D
 {
 	float x, y, z, w;
 	RenColor color;
+	RenVector3D normal;
 	RenPoint4D(float x1 = 1, float y1 = 0, float z1 = 0, float w1 = 1)
 	{ 
 		x = x1; y = y1; z = z1; w = w1;
@@ -124,11 +135,6 @@ typedef struct RenTextureCoor
 	}
 }RenTextureCoor, * RenTextureCoorPtr;
 
-typedef struct RenTexture
-{
-	RenBMPPtr bmp;
-}RenTexture, * RenTexturePtr;
-
 typedef struct RenBMP
 {
 	unsigned char *buffer;
@@ -137,8 +143,48 @@ typedef struct RenBMP
 	RGBQUAD* pColorTable;
 	int biBitCount;
 	int lineByte;
+	bool readBMP(const char* name)
+	{
+		FILE* fp = fopen(name, "rb");
+		if (fp == 0) return 0;
+		fseek(fp, sizeof(BITMAPFILEHEADER),0);
+		BITMAPINFOHEADER head;
+		fread(&head, sizeof(BITMAPINFOHEADER), 1, fp);
+		this->width = head.biWidth;
+		height = head.biHeight;
+		biBitCount = head.biBitCount;
+		lineByte = (width * biBitCount / 8 + 3) / 4 * 4;
+		if (biBitCount == 8)
+		{
+			pColorTable = new RGBQUAD[256];
+			fread(pColorTable, sizeof(RGBQUAD), 256, fp);
+		}
+		buffer = new unsigned char[lineByte * height];
+		fread(buffer, 1, lineByte * height, fp);
+		fclose(fp);
+		return 1;
+	}
+	RenColor getPixelColor(int i, int j)
+	{
+		RenColor ret;
+		if (i < 0 || i > width || j < 0 || j > height)
+		{
+			ret.setValue(1, 255, 255, 255);
+			return ret;
+		}
+		unsigned char* base = buffer + i * lineByte + j * 3;
+		unsigned char b = *(base);
+		unsigned char g = *(base + 1);
+		unsigned char r = *(base + 2);
+		ret.setValue(1, b, g, r);
+		return ret;
+	}
 }RenBMP, *RenBMPPtr;
 
+typedef struct RenTexture
+{
+	RenBMP bmp;
+}RenTexture, * RenTexturePtr;
 
 typedef struct RenMaterial
 {
@@ -150,18 +196,19 @@ typedef struct RenMaterial
 
 typedef struct RenTriangle
 {
-	int pointIndex[3];
-	int texIndex[3];
-	RenVector4D normal;
+	RenVector3D pointIndex;
+	RenVector3D texIndex;
+	RenVector3D normal;
+	RenVector3D pointNormal[3];//for Goulaud shading
 	RenPoint4DPtr pointListPtr;
 	RenTextureCoorPtr textureCoorListPtr;
 	float angleWithSunLight;
 
 	RenTriangle (int pi1 = 0, int pi2 = 1, int pi3 = 2, int ti1 = 0, int ti2 = 1, int ti3 = 2)
 	{
-		pointIndex[0] = pi1; pointIndex[1] = pi2; pointIndex[2] = pi3;
-		texIndex[0] = ti1; texIndex[1] = ti2; texIndex[2] = ti3;
-		normal.SetValue(1, 0, 0, 1);
+		pointIndex.SetValue(pi1, pi2, pi3); 
+		texIndex.SetValue(ti1, ti2, ti3); 
+		normal.SetValue(1, 0, 0);
 		pointListPtr = 0;
 		textureCoorListPtr = 0;
 		angleWithSunLight = 0;
@@ -176,7 +223,7 @@ typedef struct RenPrimitive
 	//RenVector3D normal;
 	//TODO: 
 	//BitMapPtr *map;
-	int renderMode;
+	//int renderMode;
 	int state;
 	//float angleWithSunLight;
 }RenPrimitive, * RenPrimitivePtr;
@@ -186,8 +233,10 @@ typedef struct RenObject
 	char name[64];
 	RenPoint4D pointList[MAX_OBJECT_POINTS];
 	RenPoint4D transferredPointList[MAX_OBJECT_POINTS];
-	RenTextureCoor textureCoorList[MAX_NUM_TEXTURES];
 	RenTriangle triangleList[MAX_NUM_TRIANGLES];
+	RenTextureCoor textureCoorList[MAX_NUM_TEXTURE_COOR];
+	RenTexture textureList[MAX_NUM_TEXTURES];
+	RenMaterial materialList[MAX_NUM_MATIRIALS];
 	//RenTriangle transferredTriangleList[MAX_NUM_TRIANGLES];
 	int numberOfPoints;
 	int numberOfTriangles;
@@ -210,3 +259,5 @@ RenMatrix4D CreateIdentityMatrix();
 void SwapPoint4D(RenPoint4D p1, RenPoint4D p2);
 
 COLORREF RenColorToCOLORREF(RenColor c);
+
+RenVector4D vector3DTo4D(RenVector3D v3d);

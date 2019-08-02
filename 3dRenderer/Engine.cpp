@@ -26,6 +26,7 @@ RenEngine::RenEngine()
 {
 	x = y = w = h = 0;
 	hdc = 0;
+	renderingMode = RENDERING_MODE_WIREFRAME;
 }
 
 void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
@@ -34,7 +35,8 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 	y = y1;
 	w = w1;
 	h = h1;
-	LoadTriangleObject();
+	//LoadTriangleObject();
+	LoadObjectFormModelASE("res/ASEModels","teaport.ASE");
 	renCamera.InitCamera(1,10000);
 	RenColor ambientColor(255,255,255,1);
 	RenVector4D dir(0, 0, 1, 1);
@@ -46,8 +48,10 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 }
 void RenEngine::RenderLoop()
 {
-	RenVector4D worldPos(0,0,0,1);
-	LocalToProjectionTransformation(worldPos);
+	RenVector4D worldPos(0,0,80,1);
+	LocalToWorldTransformation(worldPos);
+	WorldToCameraTransformation();
+	CameraToProjectionTransformation();
 	//TODO: clipping
 	GenerateRenderingList();
 	ProjectionToViewPortTransformation();
@@ -58,21 +62,22 @@ void RenEngine::RenderLoop()
 
 void RenEngine::GenerateRenderingList()
 {
-	RenObject tmpObject;
+	RenObjectPtr tmpObjPtr;
+	RenTriangle tri;
+	RenPrimitive p;
 	for (int i = 0; i < numberOfObjects; i++)
 	{
-		tmpObject = renObjectList[i];
-		for (int j = 0; j < tmpObject.numberOfTriangles; j++)
+		tmpObjPtr = &(renObjectList[i]);
+		for (int j = 0; j < tmpObjPtr->numberOfTriangles; j++)
 		{
-			RenTriangle tri = tmpObject.triangleList[j];
-			RenPrimitive p;
-			p.p[0] = tmpObject.transferredPointList[tri.pointIndex[0]];
-			p.p[1] = tmpObject.transferredPointList[tri.pointIndex[1]];
-			p.p[2] = tmpObject.transferredPointList[tri.pointIndex[2]];
-			p.t[0] = tmpObject.textureCoorList[tri.texIndex[0]];
-			p.t[1] = tmpObject.textureCoorList[tri.texIndex[1]];
-			p.t[2] = tmpObject.textureCoorList[tri.texIndex[2]];
-			p.renderMode = PRIMITIVE_MODE_WIREFRAME;
+			tri = tmpObjPtr->triangleList[j];
+
+			p.p[0] = tmpObjPtr->transferredPointList[(int)tri.pointIndex.x];
+			p.p[1] = tmpObjPtr->transferredPointList[(int)tri.pointIndex.y];
+			p.p[2] = tmpObjPtr->transferredPointList[(int)tri.pointIndex.z];
+			p.t[0] = tmpObjPtr->textureCoorList[(int)tri.texIndex.x];
+			p.t[1] = tmpObjPtr->textureCoorList[(int)tri.texIndex.y];
+			p.t[2] = tmpObjPtr->textureCoorList[(int)tri.texIndex.z];
 			p.state = PRIMITIVE_STATE_ACTIVE;
 			renRenderingList[numberOfPrimitives] = p;
 			numberOfPrimitives++;
@@ -125,11 +130,8 @@ void RenEngine::LoadTriangleObject()
 	numberOfObjects ++;
 }
 
-void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
+void RenEngine::LoadObjectFormModelASE(const string& folderPath, const string& fileName)
 {
-		RenTexturePtr textureList = renTextureList;
-		RenMaterialPtr materialList = renMaterialList;
-
 		//------------------full path of file
 		string fileFullPath = folderPath + "/" + fileName;
 		//open file
@@ -352,79 +354,69 @@ void RenEngine::LoadModelASE(const string& folderPath, const string& fileName)
 		}
 		//convert data format and fill data to mesh
 		{
+			RenObjectPtr tmpObj = &(renObjectList[numberOfObjects]);
 			//----material and texture
-			const int materialIDBase = (int)m_materialList.size();
-			const int textureIDBase = (int)m_textureCoorList.size();
 			const int materialCount = (int)ambientList.size();
+			
 			for (int materialIndex = 0; materialIndex < materialCount; materialIndex++) {
-				Cc3dMaterial* material = new Cc3dMaterial();
-				material->m_ambient = ambientList[materialIndex];
-				material->m_diffuse = diffuseList[materialIndex];
-				material->m_shininess = shineStrengthList[materialIndex] / shineList[materialIndex];//i guess it like that, not sure!!!
-				material->m_specular = specularList[materialIndex];
-				m_materialList.push_back(material);
-				Ctexture* texture = new Ctexture();
+				tmpObj->materialList[materialIndex].ambient = vector3DTo4D(ambientList[materialIndex]);
+				tmpObj->materialList[materialIndex].diffuse = vector3DTo4D(diffuseList[materialIndex]);
+				tmpObj->materialList[materialIndex].specular = vector3DTo4D(specularList[materialIndex]);
+				tmpObj->materialList[materialIndex].shininess = shineStrengthList[materialIndex] / shineList[materialIndex];
+
 				string texFilePath = folderPath + "/" + texFileNameList[materialIndex];
-				bool initTexSucc = texture->initWithFile(texFilePath);
+				bool initTexSucc = tmpObj->textureList[materialIndex].bmp.readBMP(texFilePath.c_str());
 				assert(initTexSucc);
-				m_textureCoorList.push_back(texture);
+				numberOfMaterials++;
+				numberOfTextures++;
 
 			}
 
-
-
 			//----convert mesh
-			vector<Cvert> vList;
-			vector<Cc3dIDTriangle> IDtriList;
-			int faceCount = (int)faceList.size();
-			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++) {
-				const Cc3dIDTriangle& face = faceList[faceIndex];
-				const Cc3dIDTriangle& tface = tfaceList[faceIndex];
-				for (int i = 0; i < 3; i++) {
-					const int vID = face.vID(i);
-					const int tvID = tface.vID(i);
-					Cvert v;
-					v.m_pos = posList[vID];
-					v.m_norm;
-					if (i == 0) {
-						v.m_norm = faceV0NormList[faceIndex];
-					}
-					else if (i == 1) {
-						v.m_norm = faceV1NormList[faceIndex];
-					}
-					else if (i == 2) {
-						v.m_norm = faceV2NormList[faceIndex];
-					}
-					v.m_materialID = materialIDBase + materialRef;
-					v.m_textureID = textureIDBase + materialRef;
-					v.m_texCoord = tvertexList[tvID];
-					vList.push_back(v);
-				}
-				int newVID0 = faceIndex * 3 + 0;
-				int newVID1 = faceIndex * 3 + 1;
-				int newVID2 = faceIndex * 3 + 2;
-				IDtriList.push_back(Cc3dIDTriangle(newVID0, newVID1, newVID2));
-			}//got vList and IDtriList
-			//fill vList and IDtriList to mesh
-			mesh->m_IDtriList = IDtriList;
-			for (int i = 0; i < (int)vList.size(); i++) {
-				mesh->pushBackVert(vList[i]);
-			}//got mesh
+			
+			int pointCnt = (int)posList.size();
+			renObjectList[numberOfObjects].numberOfPoints = pointCnt;
+			for (int posIndex = 0; posIndex < pointCnt; posIndex++)
+			{
+				tmpObj->pointList[posIndex].x = posList[posIndex].x;
+				tmpObj->pointList[posIndex].y = posList[posIndex].y;
+				tmpObj->pointList[posIndex].z = posList[posIndex].z;
+				tmpObj->pointList[posIndex].w = 1;
+			}
+			int faceCnt = (int)faceList.size();
+			renObjectList[numberOfObjects].numberOfTriangles = faceCnt;
+			
+			RenVector3D tmpV;
+			RenVector3D v0N, v1N, v2N;
+			for (int faceIndex = 0; faceIndex < faceCnt; faceIndex++)
+			{
+				tmpV = faceList[faceIndex];
+				tmpObj->triangleList[faceIndex].pointIndex.SetValue(tmpV);
+				
+				tmpV = tfaceList[faceIndex];
+				tmpObj->triangleList[faceIndex].texIndex.SetValue(tmpV);
+				
+				tmpV = faceNormList[faceIndex];
+				tmpObj->triangleList[faceIndex].normal.SetValue(tmpV);
 
+				v0N = faceV0NormList[faceIndex];
+				v1N = faceV1NormList[faceIndex];
+				v2N = faceV2NormList[faceIndex];
+				tmpObj->triangleList[faceIndex].pointNormal[0].SetValue(v0N);
+				tmpObj->triangleList[faceIndex].pointNormal[1].SetValue(v1N);
+				tmpObj->triangleList[faceIndex].pointNormal[2].SetValue(v2N);
+			}
+			int textureCoorCnt = (int)tvertexList.size();
+			for (int tIndex = 0; tIndex < textureCoorCnt; tIndex++)
+			{
+				renObjectList[numberOfObjects].textureCoorList[tIndex].u = tvertexList[tIndex].u;
+				renObjectList[numberOfObjects].textureCoorList[tIndex].v = tvertexList[tIndex].v;
+			}
+			numberOfObjects++;
 		}
-
-
-
-
-
 		//--------------------------close file
 		fclose(fp);
 	
-}
-
-void RenEngine::LoadObjectFromFile(char* filename)
-{
-	//TODO
 }
 
 void RenEngine::ReadKeyInput()
@@ -454,7 +446,7 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 	RenPoint4D p2 = pri.p[1];
 	RenPoint4D p3 = pri.p[2];
 	
-	if (pri.renderMode == PRIMITIVE_MODE_WIREFRAME)
+	if (renderingMode == RENDERING_MODE_WIREFRAME)
 	{
 		RenColor tmpColor(255, 255, 255, 1);
 		DrawLine(p1.x, p1.y, p2.x, p2.y, tmpColor);
@@ -599,7 +591,7 @@ void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renCo
 	
 //}
 
-void RenEngine::LocalToProjectionTransformation(RenVector4D &worldPos)
+void RenEngine::LocalToWorldTransformation(RenVector4D &worldPos)
 {
 	for (int i = 0; i < numberOfObjects; i ++)
 	{
@@ -611,23 +603,42 @@ void RenEngine::LocalToProjectionTransformation(RenVector4D &worldPos)
 			tmpObject->transferredPointList[j].y = tmpObject->pointList[j].y + worldPos.y;
 			tmpObject->transferredPointList[j].z = tmpObject->pointList[j].z + worldPos.z;
 			//TODO: transform normal vector, from local to world space
-			for (int k = 0; k < tmpObject->numberOfTriangles; k++)
-			{
-				CalculateTriangleNormal(&(tmpObject->triangleList[k]));
-			}
-			//TODO: lighting
-			// world to camera
-			tmpObject->transferredPointList[j] = tmpObject->transferredPointList[j] * renCamera.cameraTrans;
-			// camera to projection
-			//TODO: z--> 1/z
-			tmpObject->transferredPointList[j].x = (tmpObject->transferredPointList[j].x * renCamera.zn) / tmpObject->transferredPointList[j].z;
-			tmpObject->transferredPointList[j].y = (tmpObject->transferredPointList[j].y * renCamera.zn) / tmpObject->transferredPointList[j].z;
+		}
+	}
+}
+
+void RenEngine::WorldToCameraTransformation()
+{
+	for (int i = 0; i < numberOfObjects; i++)
+	{
+		RenObjectPtr tmpObj = &(renObjectList[i]);
+		
+		//TODO: lighting
+		// world to camera
+		for (int j = 0; j < tmpObj->numberOfPoints; j++)
+		{
+			tmpObj->transferredPointList[j] = tmpObj->transferredPointList[j] * renCamera.cameraTrans;
+		}
+	}
+}
+void RenEngine::CameraToProjectionTransformation()
+{
+	for (int i = 0; i < numberOfObjects; i++)
+	{
+		RenObjectPtr tmpObj = &(renObjectList[i]);
+		// camera to projection
+		//TODO: z--> 1/z
+		for (int j = 0; j < tmpObj->numberOfPoints; j++)
+		{
+			tmpObj->transferredPointList[j].x = (tmpObj->transferredPointList[j].x * renCamera.zn) / tmpObj->transferredPointList[j].z;
+			tmpObj->transferredPointList[j].y = (tmpObj->transferredPointList[j].y * renCamera.zn) / tmpObj->transferredPointList[j].z;
 		}
 	}
 }
 
 void RenEngine::IsObjectOutOfBoundary()
 {
+
 }
 
 void RenEngine::ProjectionToViewPortTransformation()
