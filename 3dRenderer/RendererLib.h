@@ -45,8 +45,17 @@ typedef struct RenPoint2D
 
 typedef struct RenPoint3D
 {
-	float x, y, z;
-	
+	union
+	{
+		struct
+		{
+			float x, y, z;
+		};
+		struct
+		{
+			float p1, p2, p3;
+		};
+	};
 	RenPoint3D(float x1 = 0, float y1 = 0, float z1 = 0)
 	{
 		x = x1; y = y1; z = z1; 
@@ -111,6 +120,7 @@ typedef struct RenPoint4D
 	}
 }RenPoint4D, * RenPoint4DPtr, RenVector4D, * RenVector4DPtr;
 
+
 typedef struct RenLine2D
 {
 	RenPoint2D p1, p2;
@@ -134,6 +144,15 @@ typedef struct RenTextureCoor
 		u = u1; v = v1;
 	}
 }RenTextureCoor, * RenTextureCoorPtr;
+
+typedef struct RenVertex4D
+{
+
+	RenPoint4D p;
+	RenTextureCoor t;
+	RenVector3D normal;
+	RenColor color;
+}RenVertex4D, * RenVertex4DPtr;
 
 typedef struct RenBMP
 {
@@ -217,14 +236,14 @@ typedef struct RenTriangle
 
 typedef struct RenPrimitive
 {
-	RenPoint4D p[3];
-	RenTextureCoor t[3];
+	RenVertex4D v[3];
 	RenColor c; // used for wireframe mode
 	//RenVector3D normal;
 	//TODO: 
 	//BitMapPtr *map;
 	//int renderMode;
 	int state;
+	int objetcIndex; // which object does this primitive belong to?
 	//float angleWithSunLight;
 }RenPrimitive, * RenPrimitivePtr;
 
@@ -243,9 +262,11 @@ typedef struct RenObject
 	float maxRadius;
 }RenObject, * RenObjectPtr;
 
+float CalculateDotProduct3D(const RenVector3D& u, const RenVector3D& v);
+RenVector3D CalculateCrossProduct3D(RenVector3D& u, RenVector3D& v);
+RenVector4D CalculateCrossProduct4D(RenVector4D& u, RenVector4D& v);
 
-RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v);
-
+void Vector3DNormalize(RenVector3D* v);
 void Vector4DNormalize(RenVector4D* v);
 void CalculateTriangleNormal(RenTriangle* tri);
 
@@ -256,11 +277,13 @@ RenVector2D fscanVector2(FILE* fp);
 
 
 RenMatrix4D CreateIdentityMatrix();
-void SwapPoint4D(RenPoint4D p1, RenPoint4D p2);
+void SwapVertex4D(RenVertex4DPtr v1, RenVertex4DPtr v2);
+void SwapPoint4D(RenPoint4DPtr p1, RenPoint4DPtr p2);
 
 COLORREF RenColorToCOLORREF(RenColor c);
 
 RenVector4D vector3DTo4D(RenVector3D v3d);
+RenVector3D vector4DTo3D(RenVector4D v3d);
 
 void RotateAroundXAxis(RenVector4D& p, float rad);
 void RotateAroundYAxis(RenVector4D& p, float rad);

@@ -78,6 +78,15 @@ vector<string> divideStr(const string& str, const string& dividerChars) {
 	return strList;
 
 }
+float FastInverseSqrt(float x)
+{
+	float half_x = 0.5 * x;
+	int i = *((int*)& x); 
+	i = 0x5f3759df - (i >> 1); 
+	x = *((float*)& i); 
+	x = x * (1.5 - (half_x * x * x)); 
+	return x;
+}
 int charToNumber(char c) {
 	assert('0' < '9');
 	assert(c >= '0');
