@@ -168,12 +168,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		ReleaseDC(hWnd, hdc);
 	    }
 		break;
+	case WM_KEYDOWN:
+	{
+		switch (wParam)
+		{
+		case 'A':
+			myRenderer->MoveLeft(5);
+			InvalidateRect(hWnd, NULL, false);
+			break;
+		case 'D':
+			myRenderer->MoveRight(5);
+			InvalidateRect(hWnd, NULL, false);
+			break;
+		case 'W':
+		{
+			myRenderer->MoveForward(5);
+			//UpdateWindow(hWnd);
+			InvalidateRect(hWnd, NULL, false);
+		}
+		break;
+		case 'S':
+		{
+			myRenderer->MoveBackward(5);
+			//Invalidate(FALSE);
+			InvalidateRect(hWnd, NULL, false);
+			break;
+		}
+		case 'n':
+			break;
+		}
+	}
+	break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: Add any drawing code that uses hdc here...
-			//BitBlt(hdcBackBuffer, 0, 0, cxClients, cyClients, NULL, NULL, NULL, BLACKNESS);
+			BitBlt(hdcBackBuffer, 0, 0, cxClients, cyClients, NULL, NULL, NULL, BLACKNESS);
 			myRenderer->SetDC(hdcBackBuffer);
 			myRenderer->RenderLoop();
 			
@@ -181,6 +212,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
         }
         break;
+
     case WM_DESTROY:
 		SelectObject(hdcBackBuffer, hOldBitmap);
 		DeleteDC(hdcBackBuffer);
