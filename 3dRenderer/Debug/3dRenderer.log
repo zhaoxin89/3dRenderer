@@ -12,24 +12,24 @@ D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(228,23): warning C4
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(229,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(229,26): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(229,21): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(302,34): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(302,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(302,22): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(326,37): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(326,30): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(326,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(533,83): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(533,74): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(535,23): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(535,19): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(584,84): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(584,74): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(586,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(586,18): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(611,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(613,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(628,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(303,34): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(303,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(303,22): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(327,37): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(327,30): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(327,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(534,83): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(534,74): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(536,23): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(536,19): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(585,84): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(585,74): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(587,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(587,18): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(612,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(614,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(629,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
   Generating Code...
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(630,26): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(631,26): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
   LINK : D:\Study\code\3dRenderer\3dRenderer\Debug\3dRenderer.exe not found or not built by the last incremental link; performing full link
   3dRenderer.vcxproj -> D:\Study\code\3dRenderer\3dRenderer\Debug\3dRenderer.exe
