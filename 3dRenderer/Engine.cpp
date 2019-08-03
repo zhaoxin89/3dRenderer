@@ -50,6 +50,7 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 }
 void RenEngine::RenderLoop()
 {
+
 	RenVector4D worldPos(0,0,20,1);
 	LocalToWorldTransformation(worldPos);
 	WorldToCameraTransformation();
@@ -782,4 +783,3 @@ void RenEngine::MoveDown(int speed)
 	renCamera.location.y -= speed;
 	renCamera.CalculateCameraTrans();
 }
-

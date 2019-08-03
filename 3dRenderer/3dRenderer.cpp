@@ -194,6 +194,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			InvalidateRect(hWnd, NULL, false);
 			break;
 		}
+
 		case 'R':
 		{
 			myRenderer->MoveUp(5);
@@ -206,6 +207,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			InvalidateRect(hWnd, NULL, false);
 			break;
 		}
+
 		case 'n':
 			break;
 		}
