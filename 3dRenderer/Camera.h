@@ -6,17 +6,15 @@
 class RenCamera
 {
 public:
-	RenVector3D location;
-	RenVector3D up, forward, right;
+	RenPoint4D location;
+	RenVector4D up, forward, right;
 	float zn, zf;
 	RenMatrix4D cameraTrans;
 public:
-	void InitCamera(float zN, float zF, RenVector3D loc);
+	void InitCamera(float zN, float zF);
 	void CalculateCameraTrans();
-	void UpdateLocation(RenVector3D& loc);
-	void UpdateUp(RenVector3D& u);
-	void UpdateForward(RenVector3D& f);
-	void UpdateRight(RenVector3D& r);
-	void Yaw(int speed);
-	void Pitch(int speed);
+	void UpdateLocation(RenPoint4D& loc);
+	void UpdateUp(RenVector4D& u);
+	void UpdateForward(RenVector4D& f);
+	void UpdateRight(RenVector4D& r);
 };

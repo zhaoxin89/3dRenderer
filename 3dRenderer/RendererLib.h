@@ -243,11 +243,9 @@ typedef struct RenObject
 	float maxRadius;
 }RenObject, * RenObjectPtr;
 
-float CalculateDotProduct3D(const RenVector3D& u, const RenVector3D& v);
-RenVector3D CalculateCrossProduct3D(RenVector3D& u, RenVector3D& v);
-RenVector4D CalculateCrossProduct4D(RenVector4D& u, RenVector4D& v);
 
-void Vector3DNormalize(RenVector3D* v);
+RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v);
+
 void Vector4DNormalize(RenVector4D* v);
 void CalculateTriangleNormal(RenTriangle* tri);
 
@@ -263,7 +261,6 @@ void SwapPoint4D(RenPoint4D p1, RenPoint4D p2);
 COLORREF RenColorToCOLORREF(RenColor c);
 
 RenVector4D vector3DTo4D(RenVector3D v3d);
-RenVector3D vector4DTo3D(RenVector4D v3d);
 
 void RotateAroundXAxis(RenVector4D& p, float rad);
 void RotateAroundYAxis(RenVector4D& p, float rad);

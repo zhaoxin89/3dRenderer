@@ -25,11 +25,6 @@ public:
 	void RenderLoop();
 	void RenderExit();
 
-	void MoveForward(int speed);
-	void MoveBackward(int speed);
-	void MoveLeft(int speed);
-	void MoveRight(int speed);
-
 	inline void SetDC(HDC h)
 	{
 		hdc = h;
@@ -50,8 +45,7 @@ private:
 	void Rendering();
 	void ReadKeyInput();
 
-	void LocalTransformation(float radX, float radY, float radZ, float scale);
-	void LocalToWorldTransformation(RenVector4D &worldPos);
+	void LocalToWorldTransformation(RenVector4D &worldPos, float radX, float radY, float radZ, float scale);
 	void WorldToCameraTransformation();
 	void CameraToProjectionTransformation();
 	void IsObjectOutOfBoundary();
@@ -64,9 +58,7 @@ private:
 	void DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3);
 	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3);
 	void DrawLine(float x1, float y1, float x2, float y2, RenColor renColor);
-
-
-public:
+private:
 	RenCamera renCamera;
 	
 	RenLight renLight[MAX_NUM_LIGHTS];

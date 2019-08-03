@@ -1,26 +1,9 @@
 #include "RendererLib.h"
 #include <cassert>
 #include <string>
-#include "Utils.h"
 
 using namespace std;
-float CalculateDotProduct3D(const RenVector3D& u, const RenVector3D& v)
-{
-	float ret;
-	ret = u.x * v.x + u.y * v.y + u.z * v.z;
-	return ret;
-}
-
-RenVector3D CalculateCrossProduct3D(RenVector3D& u, RenVector3D& v)
-{
-	RenVector3D ret;
-	ret.x = u.y * v.z - v.y * u.z;
-	ret.y = v.x * u.z - u.x * v.z;
-	ret.z = u.x * v.y - v.x * u.y;
-	return ret;
-}
-
-RenVector4D CalculateCrossProduct4D(RenVector4D& u, RenVector4D& v)
+RenVector4D CalculateCrossProduct(RenVector4D& u, RenVector4D& v)
 {
 	RenVector4D ret;
 	ret.x = u.y * v.z - v.y * u.z;
@@ -32,21 +15,10 @@ RenVector4D CalculateCrossProduct4D(RenVector4D& u, RenVector4D& v)
 
 void Vector4DNormalize(RenVector4D* v)
 {
-	float tmp = v->x * v->x + v->y * v->y + v->z * v->z + v->w * v->w;
-	float invsqrt = FastInverseSqrt(tmp);
-	v->x *= invsqrt;
-	v->y *= invsqrt;
-	v->z *= invsqrt;
-	v->w *= invsqrt;
-}
-
-void Vector3DNormalize(RenVector3D* v)
-{
-	float tmp = v->x * v->x + v->y * v->y + v->z * v->z;
-	float invsqrt = FastInverseSqrt(tmp);
-	v->x *= invsqrt;
-	v->y *= invsqrt;
-	v->z *= invsqrt;
+	float l = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
+	v->x /= l;
+	v->y /= l;
+	v->z /= l;
 }
 void CalculateTriangleNormal(RenTriangle* tri)
 {
@@ -105,13 +77,6 @@ RenVector4D vector3DTo4D(RenVector3D v3d)
 {
 	RenVector4D ret;
 	ret.SetValue(v3d.x, v3d.y, v3d.z, 1);
-	return ret;
-}
-
-RenVector3D vector4DTo3D(RenVector4D v3d)
-{
-	RenVector3D ret;
-	ret.SetValue(v3d.x, v3d.y, v3d.z);
 	return ret;
 }
 

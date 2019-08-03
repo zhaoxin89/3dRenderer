@@ -37,9 +37,7 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 	h = h1;
 	//LoadTriangleObject();
 	LoadObjectFormModelASE("res/ASEModels","teaport.ASE");
-	LocalTransformation(PI / 2, 0, 0, 1);
-	RenVector3D cameraLoc(0, 0, 0);
-	renCamera.InitCamera(1,10000, cameraLoc);
+	renCamera.InitCamera(1,10000);
 	RenColor ambientColor(255,255,255,1);
 	RenVector4D dir(0, 0, 1, 1);
 	RenVector4D loc(0, 0, -50, 1);
@@ -51,7 +49,7 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 void RenEngine::RenderLoop()
 {
 	RenVector4D worldPos(0,0,200,1);
-	LocalToWorldTransformation(worldPos);
+	LocalToWorldTransformation(worldPos, -PI/2, 0, 0, 1);
 	WorldToCameraTransformation();
 	CameraToProjectionTransformation();
 	//TODO: clipping
@@ -81,7 +79,8 @@ void RenEngine::GenerateRenderingList()
 			p.t[1] = tmpObjPtr->textureCoorList[(int)tri.texIndex.y];
 			p.t[2] = tmpObjPtr->textureCoorList[(int)tri.texIndex.z];
 			p.state = PRIMITIVE_STATE_ACTIVE;
-			renRenderingList[j] = p;
+			renRenderingList[numberOfPrimitives] = p;
+			numberOfPrimitives++;
 		}
 	}
 }
@@ -419,9 +418,7 @@ void RenEngine::LoadObjectFormModelASE(const string& folderPath, const string& f
 				renObjectList[numberOfObjects].textureCoorList[tIndex].v = tvertexList[tIndex].v;
 			}
 			numberOfObjects++;
-			numberOfPrimitives += tmpObj->numberOfTriangles;
 		}
-		
 		//--------------------------close file
 		fclose(fp);
 	
@@ -600,34 +597,28 @@ void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renCo
 //{
 	
 //}
-void RenEngine::LocalTransformation(float radX, float radY, float radZ, float scale)
-{
-	for (int i = 0; i < numberOfObjects; i++)
-	{
-		RenObjectPtr tmpObject = &(renObjectList[i]);
-		for (int j = 0; j < tmpObject->numberOfPoints; j++)
-		{
-			RotateAroundXAxis(tmpObject->pointList[j], radX);
-			RotateAroundYAxis(tmpObject->pointList[j], radY);
-			RotateAroundZAxis(tmpObject->pointList[j], radZ);
 
-			tmpObject->pointList[j].x /= scale;
-			tmpObject->pointList[j].y /= scale;
-			tmpObject->pointList[j].z /= scale;
-		}
-	}
-}
-void RenEngine::LocalToWorldTransformation(RenVector4D& worldPos)
+void RenEngine::LocalToWorldTransformation(RenVector4D& worldPos, float radX, float radY, float radZ, float scale)
 {
 	for (int i = 0; i < numberOfObjects; i ++)
 	{
 		RenObjectPtr tmpObject = &(renObjectList[i]);
 		for (int j = 0; j < tmpObject->numberOfPoints; j ++)
 		{
+			//TODO: transform normal vector, from local to world space
+
+			RotateAroundXAxis(tmpObject->transferredPointList[j], radX);
+			RotateAroundYAxis(tmpObject->transferredPointList[j], radY);
+			RotateAroundZAxis(tmpObject->transferredPointList[j], radZ);
+
+			tmpObject->transferredPointList[j].x /= scale;
+			tmpObject->transferredPointList[j].y /= scale;
+			tmpObject->transferredPointList[j].z /= scale;
+
 			// local to world
-			tmpObject->transferredPointList[j].x = tmpObject->pointList[j].x + worldPos.x;
-			tmpObject->transferredPointList[j].y = tmpObject->pointList[j].y + worldPos.y;
-			tmpObject->transferredPointList[j].z = tmpObject->pointList[j].z + worldPos.z;
+			tmpObject->transferredPointList[j].x = tmpObject->transferredPointList[j].x + worldPos.x;
+			tmpObject->transferredPointList[j].y = tmpObject->transferredPointList[j].y + worldPos.y;
+			tmpObject->transferredPointList[j].z = tmpObject->transferredPointList[j].z + worldPos.z;
 		}
 	}
 }
@@ -712,26 +703,5 @@ void RenEngine::Lighting()
 void RenEngine::Rendering()
 {
 	Rasterization();
-}
-
-void RenEngine::MoveForward(int speed)
-{
-	renCamera.location.z += speed;
-	renCamera.CalculateCameraTrans();
-}
-void RenEngine::MoveBackward(int speed)
-{
-	renCamera.location.z -= speed;
-	renCamera.CalculateCameraTrans();
-}
-void RenEngine::MoveLeft(int speed)
-{
-	renCamera.location.x -= speed;
-	renCamera.CalculateCameraTrans();
-}
-void RenEngine::MoveRight(int speed)
-{
-	renCamera.location.x += speed;
-	renCamera.CalculateCameraTrans();
 }
 

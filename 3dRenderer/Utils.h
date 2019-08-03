@@ -14,4 +14,3 @@ string fscanStr(FILE* fp, const string& expectedStr = "");
 string fscanOneQuotation(FILE* fp);
 vector<string> divideStr(const string& str, const string& dividerChars);
 
-float FastInverseSqrt(float x);
