@@ -13,6 +13,7 @@
 #define RENDERING_MODE_WIREFRAME 0
 #define RENDERING_MODE_PURE_COLOR 1
 #define RENDERING_MODE_TEXTURE 2
+#define RENDERING_MODE_ENABLE_ZBUFFER 4
 
 using namespace std;
 
@@ -52,7 +53,7 @@ private:
 	void Rendering();
 	void ReadKeyInput();
 
-	void LocalTransformation(float radX, float radY, float radZ, float scale);
+	void LocalTransformation(RenVector3D worldPos, float radX, float radY, float radZ, float scale, int objIndex);
 	void LocalToWorldTransformation(RenVector4D &worldPos);
 	void WorldToCameraTransformation();
 	void CameraToProjectionTransformation();
@@ -67,6 +68,7 @@ private:
 	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex);
 	void DrawLine(float x1, float y1, float x2, float y2, RenColor renColor);
 
+	void ResetZBuffer();
 
 public:
 	RenCamera renCamera;
@@ -83,6 +85,7 @@ public:
 	int numberOfTextures = 0;
 	int x, y, w, h;
 
+	float* zBuffer;
 	int renderingMode;
 	HDC hdc;
 

@@ -140,3 +140,32 @@ void RotateAroundZAxis(RenVector4D& p, float rad)
 	p.x = p.x * cos(rad) - p.y * sin(rad);
 	p.y = p.x * sin(rad) + p.y * cos(rad);
 }
+
+void RotateAroundXAxis(RenVector3D& p, float rad)
+{
+	p.y = p.y * cos(rad) - p.z * sin(rad);
+	p.z = p.y * sin(rad) + p.z * cos(rad);
+}
+
+void RotateAroundYAxis(RenVector3D& p, float rad)
+{
+	p.x = p.x * cos(rad) + p.z * sin(rad);
+	p.z = -p.x * sin(rad) + p.z * cos(rad);
+}
+
+void RotateAroundZAxis(RenVector3D& p, float rad)
+{
+	p.x = p.x * cos(rad) - p.y * sin(rad);
+	p.y = p.x * sin(rad) + p.y * cos(rad);
+}
+void Interpolate(float x1, float y1, float x2, float y2, float x3, float y3, float x, float y, float c[3])
+{
+
+	float a = (y2 - y3) * (x1 - x3) - (x2 - x3) * (y1 - y3);
+	float U = ((y2 - y3) * (x - x3) - (y - y3) * (x2 - x3)) / a;
+	float V = ((y - y3) * (x1 - x3) - (y1 - y3) * (x - x3)) / a;
+
+	c[0] = U;
+	c[1] = V;
+	c[2] = 1 - U - V;
+}

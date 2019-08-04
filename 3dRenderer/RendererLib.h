@@ -13,6 +13,9 @@
 #define PRIMITIVE_STATE_ACTIVE 0
 #define PRIMITIVE_STATE_NON_ACTIVE 1
 
+#define BACKFACE_DETECTION_VALIDATED 0
+#define BACKFACE_DETECTION_REMOVED 1
+
 typedef struct RenColor
 {
 	unsigned char alpha;
@@ -218,9 +221,11 @@ typedef struct RenTriangle
 	RenVector3D pointIndex;
 	RenVector3D texIndex;
 	RenVector3D normal;
+	RenVector3D originalNormal;
 	RenVector3D pointNormal[3];//for Goulaud shading
 	RenPoint4DPtr pointListPtr;
 	RenTextureCoorPtr textureCoorListPtr;
+	int state;
 	float angleWithSunLight;
 
 	RenTriangle (int pi1 = 0, int pi2 = 1, int pi3 = 2, int ti1 = 0, int ti2 = 1, int ti3 = 2)
@@ -228,9 +233,15 @@ typedef struct RenTriangle
 		pointIndex.SetValue(pi1, pi2, pi3); 
 		texIndex.SetValue(ti1, ti2, ti3); 
 		normal.SetValue(1, 0, 0);
+		originalNormal.SetValue(1, 0, 0);
 		pointListPtr = 0;
 		textureCoorListPtr = 0;
 		angleWithSunLight = 0;
+		state = BACKFACE_DETECTION_VALIDATED;
+	}
+	void resetNormal()
+	{
+		normal = originalNormal;
 	}
 }RenTriangle, * RenTrianglePtr;
 
@@ -260,6 +271,11 @@ typedef struct RenObject
 	int numberOfPoints;
 	int numberOfTriangles;
 	float maxRadius;
+	int renderingMode;
+	void setRenderingMode(int rm)
+	{
+		renderingMode = rm;
+	}
 }RenObject, * RenObjectPtr;
 
 float CalculateDotProduct3D(const RenVector3D& u, const RenVector3D& v);
@@ -288,3 +304,9 @@ RenVector3D vector4DTo3D(RenVector4D v3d);
 void RotateAroundXAxis(RenVector4D& p, float rad);
 void RotateAroundYAxis(RenVector4D& p, float rad);
 void RotateAroundZAxis(RenVector4D& p, float rad);
+
+void RotateAroundXAxis(RenVector3D& p, float rad);
+void RotateAroundYAxis(RenVector3D& p, float rad);
+void RotateAroundZAxis(RenVector3D& p, float rad);
+
+void Interpolate(float x1, float y1, float x2, float y2, float x3, float y3, float x, float y, float c[3]);
