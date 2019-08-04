@@ -12,4 +12,4 @@ Support features:
 
 TODO list: 
 1. 2D and 3D clipping
-2. Prospective correction
+2. Perspective correction
