@@ -1,5 +1,5 @@
 # 3dRenderer
-A software rendering pipeline. The rendering takes place entirely in the CPU.
+A software rendering pipeline.
 ![demo picture](https://github.com/zhaoxin89/3dRenderer/blob/master/3DDemos.JPG)
 Support features:
 1. load objects (mesh) from external files,
