@@ -7,7 +7,8 @@ Support features:
 3. texture mapping,
 4. backface detection,
 5. z-buffer,
-4. ambient and diffuse lighting.
+6. ambient and diffuse lighting,
+7. a movable camera.
 
 TODO list: 
 1. 2D and 3D clipping
