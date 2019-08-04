@@ -44,7 +44,7 @@ private:
 	void LoadTriangleObject();
 	void LoadObjectFormModelASE(const string& folderPath, const string& fileName);
 
-	void AddLight(int att, RenColor c, RenVector4D dir, RenVector4D loc);
+	void AddLight(int att, float intensity, RenColor c, RenVector4D dir, RenVector4D loc);
 	
 	void GenerateRenderingList();
 	void PreRendering();
@@ -64,8 +64,8 @@ private:
 
 	void Rasterization();
 	void DrawPrimitive(RenPrimitive& pri);
-	void DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex);
-	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex);
+	void DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex, float diffuseLightAng);
+	void DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex, float diffuseLightAng);
 	void DrawLine(float x1, float y1, float x2, float y2, RenColor renColor);
 
 	void ResetZBuffer();
@@ -81,7 +81,7 @@ public:
 	int numberOfLights = 0;
 	int numberOfObjects = 0;
 	int numberOfPrimitives = 0;
-	int numberOfMaterials = 0;
+	
 	int numberOfTextures = 0;
 	int x, y, w, h;
 

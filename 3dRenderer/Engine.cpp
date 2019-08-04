@@ -45,16 +45,16 @@ void RenEngine::RenderInit(int x1, int y1, int w1, int h1)
 	LoadObjectFormModelASE("res/ASEModels", "box.ASE");
 	renObjectList[0].renderingMode = RENDERING_MODE_WIREFRAME;
 	renObjectList[1].renderingMode = RENDERING_MODE_TEXTURE;
-	RenVector3D worldPos(90, 0, 0);
+	RenVector3D worldPos(100, 0, 0);
 	LocalTransformation(worldPos, PI/2, 0, 0, 0.3,0);
-	RenVector3D cameraLoc(20, -10, -10);
+	RenVector3D cameraLoc(20, -13, -10);
 	renCamera.InitCamera(1, 10000, cameraLoc);
-	RenColor ambientColor(255, 255, 255, 1);
+	RenColor ambientColor(0.6, 0.6, 0.6, 1);
 	RenVector4D dir(0, 0, 1, 1);
 	RenVector4D loc(0, 0, -50, 1);
-	AddLight(RENLIGHT_ATT_AMBIENT, ambientColor, dir, loc);
-	RenColor directionalColor(255, 255, 255, 1);
-	AddLight(RENLIGHT_ATT_DIRECTIONAL, directionalColor, dir, loc);
+	AddLight(RENLIGHT_ATT_AMBIENT, 0.8, ambientColor, dir, loc);
+	RenColor directionalColor(0.6, 0.6, 0.6, 1);
+	AddLight(RENLIGHT_ATT_DIRECTIONAL, 0.3, directionalColor, dir, loc);
 	zBuffer = new float[w * h];
 	for (int i = 0; i < w * h - 1; i++)
 	{
@@ -76,6 +76,7 @@ void RenEngine::RenderLoop()
 	}
 	RenVector4D worldPos(0,0,40,1);
 	LocalToWorldTransformation(worldPos);
+	Lighting();
 	//BackFaceDetection();
 	WorldToCameraTransformation();
 	CameraToProjectionTransformation();
@@ -105,6 +106,7 @@ void RenEngine::GenerateRenderingList()
 			p.v[0].t = tmpObjPtr->textureCoorList[(int)tri.texIndex.x];
 			p.v[1].t = tmpObjPtr->textureCoorList[(int)tri.texIndex.y];
 			p.v[2].t = tmpObjPtr->textureCoorList[(int)tri.texIndex.z];
+			p.angNormalDiffuseLight = tri.angNormalDiffuseLight;
 			if (tri.state == BACKFACE_DETECTION_REMOVED)
 			{
 				p.state = PRIMITIVE_STATE_NON_ACTIVE;
@@ -127,9 +129,9 @@ void RenEngine::RenderExit()
 	zBuffer = NULL;
 }
 
-void RenEngine::AddLight(int att, RenColor c, RenVector4D dir, RenVector4D loc)
+void RenEngine::AddLight(int att, float intensity, RenColor c, RenVector4D dir, RenVector4D loc)
 {
-	renLight[numberOfLights].InitLight (att,c,dir,loc);
+	renLight[numberOfLights].InitLight (att,intensity, c,dir,loc);
 	numberOfLights++;
 }
 
@@ -403,7 +405,7 @@ void RenEngine::LoadObjectFormModelASE(const string& folderPath, const string& f
 				string texFilePath = folderPath + "/" + texFileNameList[materialIndex];
 				bool initTexSucc = tmpObj->textureList[materialIndex].bmp.readBMP(texFilePath.c_str());
 				assert(initTexSucc);
-				numberOfMaterials++;
+				tmpObj->numberOfMaterials++;
 				numberOfTextures++;
 
 			}
@@ -513,9 +515,9 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 			SwapVertex4D(&v2, &v3);
 		
 		if (v1.p.y == v2.p.y) 
-			DrawPrimitiveFlatTop(v1.p,v2.p,v3.p,v1.t,v2.t,v3.t, pri.objetcIndex);
+			DrawPrimitiveFlatTop(v1.p,v2.p,v3.p,v1.t,v2.t,v3.t, pri.objetcIndex, pri.angNormalDiffuseLight);
 		else if (v2.p.y == v3.p.y)
-			DrawPrimitiveFlatButton(v1.p, v2.p, v3.p, v1.t, v2.t, v3.t, pri.objetcIndex);
+			DrawPrimitiveFlatButton(v1.p, v2.p, v3.p, v1.t, v2.t, v3.t, pri.objetcIndex,pri.angNormalDiffuseLight);
 		else
 		{
 			//draw general triangle
@@ -526,8 +528,8 @@ void RenEngine::DrawPrimitive (RenPrimitive &pri)
 			//TODO: z buffer
 			RenPoint4D pMid(xMid, v2.p.y, zMid, 1); 
 			RenTextureCoor tMid(uMid, vMid);
-			DrawPrimitiveFlatButton(v1.p, v2.p, pMid, v1.t, v2.t, tMid, pri.objetcIndex);
-			DrawPrimitiveFlatTop(pMid, v2.p, v3.p, tMid, v2.t, v3.t, pri.objetcIndex);
+			DrawPrimitiveFlatButton(v1.p, v2.p, pMid, v1.t, v2.t, tMid, pri.objetcIndex, pri.angNormalDiffuseLight);
+			DrawPrimitiveFlatTop(pMid, v2.p, v3.p, tMid, v2.t, v3.t, pri.objetcIndex, pri.angNormalDiffuseLight);
 		}
 	}
 		
@@ -572,7 +574,7 @@ void RenEngine::DrawLine (float x1, float y1, float x2, float y2, RenColor renCo
 		}
 	}
 }
-void RenEngine::DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex)
+void RenEngine::DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex, float diffuseLightAng)
 {
 	if (p1.x > p2.x)
 	{
@@ -594,7 +596,7 @@ void RenEngine::DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D&
 	float iu, iv;
 	float c[3];
 	bool zBufferValidation = true;
-	RenColor tmpColor;
+	RenColor baseColor, tmpColor;
 	int bmpW = renObjectList[objIndex].textureList[0].bmp.width;
 	int bmpH = renObjectList[objIndex].textureList[0].bmp.height;
 	for (float iy = yStart; iy < yEnd; iy++)
@@ -612,7 +614,27 @@ void RenEngine::DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D&
 				iu = c[0] * t1.u + c[1] * t2.u + c[2] * t3.u;
 				iv = c[0] * t1.v + c[1] * t2.v + c[2] * t3.v;
 				zBuffer[w * (int)ceil(iy) + (int)ceil(ix)] = iz;
-				tmpColor = renObjectList[objIndex].textureList[0].bmp.getPixelColor(iu * bmpW, iv * bmpH);
+				baseColor = renObjectList[objIndex].textureList[0].bmp.getPixelColor(iu * bmpW, iv * bmpH);
+
+				//lighting start
+				// ambient light
+				tmpColor.blue = baseColor.blue * renObjectList[objIndex].materialList[0].ambient.x;
+				tmpColor.green = baseColor.green * renObjectList[objIndex].materialList[0].ambient.y;
+				tmpColor.red = baseColor.red * renObjectList[objIndex].materialList[0].ambient.z;
+
+				//diffuse light
+				if (diffuseLightAng > 0)
+				{
+					tmpColor.blue += baseColor.blue * renObjectList[objIndex].materialList[0].diffuse.x * diffuseLightAng;
+					tmpColor.green += baseColor.green * renObjectList[objIndex].materialList[0].diffuse.y * diffuseLightAng;
+					tmpColor.red += baseColor.red * renObjectList[objIndex].materialList[0].diffuse.z * diffuseLightAng;
+				}
+
+				if (tmpColor.blue > 0xFF)  tmpColor.blue = 0xFF;
+				if (tmpColor.green > 0xFF) tmpColor.green = 0xFF;
+				if (tmpColor.red > 0xFF) tmpColor.red = 0xFF;
+
+				//lighting end
 				COLORREF color = RenColorToCOLORREF(tmpColor);
 				SetPixel(hdc, (int)ceil(ix), (int)ceil(iy), color);
 
@@ -623,7 +645,7 @@ void RenEngine::DrawPrimitiveFlatTop(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D&
 	}
 	
 }
-void RenEngine::DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex)
+void RenEngine::DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint4D& p3, RenTextureCoor& t1, RenTextureCoor& t2, RenTextureCoor& t3, int objIndex, float diffuseLightAng)
 {
 	if (p2.x > p3.x)
 	{
@@ -642,7 +664,7 @@ void RenEngine::DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint
 	float iz;
 	float iu, iv;
 	float c[3];
-	RenColor tmpColor;
+	RenColor baseColor, tmpColor;
 	int bmpW = renObjectList[objIndex].textureList[0].bmp.width;
 	int bmpH = renObjectList[objIndex].textureList[0].bmp.height;
 	bool zBufferValidation = true;
@@ -661,7 +683,29 @@ void RenEngine::DrawPrimitiveFlatButton(RenPoint4D& p1, RenPoint4D& p2, RenPoint
 				iu = c[0] * t1.u + c[1] * t2.u + c[2] * t3.u;
 				iv = c[0] * t1.v + c[1] * t2.v + c[2] * t3.v;
 				zBuffer[w * (int)ceil(iy) + (int)ceil(ix)] = iz;
-				tmpColor = renObjectList[objIndex].textureList[0].bmp.getPixelColor(iu * bmpW, iv * bmpH); // to be verified
+				baseColor = renObjectList[objIndex].textureList[0].bmp.getPixelColor(iu * bmpW, iv * bmpH); // to be verified
+				
+				//lighting start
+				// ambient light
+				tmpColor.blue = baseColor.blue * renObjectList[objIndex].materialList[0].ambient.x;
+				tmpColor.green = baseColor.green * renObjectList[objIndex].materialList[0].ambient.y;
+				tmpColor.red = baseColor.red * renObjectList[objIndex].materialList[0].ambient.z;
+
+				//diffuse light
+				if (diffuseLightAng > 0)
+				{
+					
+					tmpColor.blue += baseColor.blue * renObjectList[objIndex].materialList[0].diffuse.x * diffuseLightAng;
+					tmpColor.green += baseColor.green * renObjectList[objIndex].materialList[0].diffuse.y * diffuseLightAng;
+					tmpColor.red += baseColor.red * renObjectList[objIndex].materialList[0].diffuse.z * diffuseLightAng;
+				
+				}
+
+				if (tmpColor.blue > 0xFF)  tmpColor.blue = 0xFF;
+				if (tmpColor.green > 0xFF) tmpColor.green = 0xFF;
+				if (tmpColor.red > 0xFF) tmpColor.red = 0xFF;
+				//lighting end
+				
 				COLORREF color = RenColorToCOLORREF(tmpColor);
 				SetPixel(hdc, (int)ceil(ix), (int)ceil(iy), color);
 			}
@@ -807,30 +851,30 @@ void RenEngine::BackFaceDetection()
 
 void RenEngine::Lighting()
 {
-	/*
-	RenObject tmpObject;
+	int difIndex = 0;
+	for (int i = 0; i < numberOfLights; i++)
+	{
+		if (renLight[i].att == RENLIGHT_ATT_DIRECTIONAL)
+			difIndex = i;
+	}
+	RenObjectPtr tmpObj = NULL;
+	RenVector3D inverseNormal;
 	for (int i = 0; i < numberOfObjects; i++)
 	{
-		tmpObject = renObjectList[i];
-		for (int j = 0; j < numberOfLights; j++)
+		tmpObj = &renObjectList[i];
+		for (int j = 0; j < tmpObj->numberOfTriangles; j++)
 		{
-			if (renLight[j].att == RENLIGHT_ATT_AMBIENT)
-			{
-				for (int k = 0; k<tmpObject.numberOfTriangles; k ++)
-				{
-					//tmpObject.triangleList[k].color *= renLight[j].Ia;
-				}
-			}
-			else if (renLight[j].att == RENLIGHT_ATT_DIRECTIONAL)
-			{
-				for (int k = 0; k < tmpObject.numberOfTriangles; k++)
-				{
-					//tmpObject.triangleList[k].color = tmpObject.triangleList[k].color * renLight[j].Id * DotProduct(&(-renLight[j].direction), &(tmpObject.triangleList[k].normal));
-				}
-			}
+			inverseNormal.x = -tmpObj->triangleList[j].normal.x;
+			inverseNormal.y = -tmpObj->triangleList[j].normal.y;
+			inverseNormal.z = -tmpObj->triangleList[j].normal.z;
+			float tmp = CalculateDotProduct3D(vector4DTo3D(renLight[difIndex].direction), inverseNormal);
+
+			//TODO divise the lengh of each vector
+			tmpObj->triangleList[j].angNormalDiffuseLight = tmp;
+
+			tmp *= renLight[difIndex].I;
 		}
 	}
-	*/
 }
 
 void RenEngine::Rendering()

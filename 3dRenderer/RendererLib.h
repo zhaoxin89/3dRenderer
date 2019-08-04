@@ -226,7 +226,7 @@ typedef struct RenTriangle
 	RenPoint4DPtr pointListPtr;
 	RenTextureCoorPtr textureCoorListPtr;
 	int state;
-	float angleWithSunLight;
+	float angNormalDiffuseLight;
 
 	RenTriangle (int pi1 = 0, int pi2 = 1, int pi3 = 2, int ti1 = 0, int ti2 = 1, int ti3 = 2)
 	{
@@ -236,7 +236,7 @@ typedef struct RenTriangle
 		originalNormal.SetValue(1, 0, 0);
 		pointListPtr = 0;
 		textureCoorListPtr = 0;
-		angleWithSunLight = 0;
+		angNormalDiffuseLight = 0;
 		state = BACKFACE_DETECTION_VALIDATED;
 	}
 	void resetNormal()
@@ -253,6 +253,7 @@ typedef struct RenPrimitive
 	//TODO: 
 	//BitMapPtr *map;
 	//int renderMode;
+	float angNormalDiffuseLight;
 	int state;
 	int objetcIndex; // which object does this primitive belong to?
 	//float angleWithSunLight;
@@ -270,6 +271,7 @@ typedef struct RenObject
 	//RenTriangle transferredTriangleList[MAX_NUM_TRIANGLES];
 	int numberOfPoints;
 	int numberOfTriangles;
+	int numberOfMaterials;
 	float maxRadius;
 	int renderingMode;
 	void setRenderingMode(int rm)

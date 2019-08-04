@@ -1,11 +1,4 @@
-﻿  3dRenderer.cpp
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,33): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,26): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-  Engine.cpp
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,21): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+﻿  Engine.cpp
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,33): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
@@ -13,45 +6,38 @@ D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,31): warning C4
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,26): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,21): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
 D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(49,49): warning C4305:  'argument': truncation from 'double' to 'float'
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(336,34): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(336,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(336,22): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(360,37): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(360,30): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(360,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(551,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(553,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(568,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(570,26): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(615,87): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(615,76): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(664,87): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-  Light.cpp
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(664,76): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,33): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,26): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-  RenderLib.cpp
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,21): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,33): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(233,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,31): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,26): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RendererLib.h(234,21): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(128,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(129,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(134,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(135,25): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(140,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(141,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(146,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(147,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(152,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(153,24): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(158,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
-  Generating Code...
-D:\Study\code\3dRenderer\3dRenderer\3dRenderer\RenderLib.cpp(159,23): warning C4244:  '=': conversion from 'double' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(52,34): warning C4244:  'argument': conversion from 'double' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(52,29): warning C4244:  'argument': conversion from 'double' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(52,24): warning C4244:  'argument': conversion from 'double' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(55,60): warning C4305:  'argument': truncation from 'double' to 'float'
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(56,38): warning C4244:  'argument': conversion from 'double' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(56,33): warning C4244:  'argument': conversion from 'double' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(56,28): warning C4244:  'argument': conversion from 'double' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(57,68): warning C4305:  'argument': truncation from 'double' to 'float'
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(338,34): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(338,28): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(338,22): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(362,37): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(362,30): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(362,23): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(553,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(555,22): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(570,15): warning C4244:  'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(572,26): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(617,88): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(617,77): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(621,36): warning C4244:  '=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(622,38): warning C4244:  '=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(623,34): warning C4244:  '=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(628,107): warning C4244:  '+=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(629,109): warning C4244:  '+=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(630,105): warning C4244:  '+=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(686,88): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(686,77): warning C4244:  'argument': conversion from 'float' to 'int', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(690,36): warning C4244:  '=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(691,38): warning C4244:  '=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(692,34): warning C4244:  '=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(698,107): warning C4244:  '+=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(699,109): warning C4244:  '+=': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Study\code\3dRenderer\3dRenderer\3dRenderer\Engine.cpp(700,105): warning C4244:  '+=': conversion from 'float' to 'unsigned char', possible loss of data
   3dRenderer.vcxproj -> D:\Study\code\3dRenderer\3dRenderer\Debug\3dRenderer.exe
